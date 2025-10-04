@@ -1,16 +1,18 @@
 <?php
-$host = "localhost";
+$host = "webbanhang.mysql.database.azure.com";
 $dbname = "webbanhang";
-$user_db = "root";
-$password = "12345";
+$user_db = "Quang25";
+$password = "Cohoi2512@";
 
-try{
-
-     $conn = new PDO("mysql:host=$host;dbname=$dbname", $user_db, $password);
-     var_dump($conn);
-     echo "Ket noi thanh cong";
-}catch(Exception $ex){
-
-      echo "Ket noi that bai: ".$ex->getMessage();
+try {
+    $conn = new PDO(
+        "mysql:host=$host;dbname=$dbname;port=3306;charset=utf8;sslmode=require",
+        $user_db,
+        $password
+    );
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+} catch (Exception $ex) {
+    echo "❌ Kết nối thất bại: " . $ex->getMessage();
 }
 ?>
