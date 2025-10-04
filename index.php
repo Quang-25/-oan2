@@ -1,6 +1,6 @@
 <?php
 // Kết nối database
-require_once "config/db.php";
+include __DIR__ . "/config/db.php";
 
 
 // Điều hướng trang
