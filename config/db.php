@@ -6,13 +6,15 @@ $password = "Cohoi2512@";
 
 try {
     $conn = new PDO(
-        "mysql:host=$host;dbname=$dbname;port=3306;charset=utf8;sslmode=require",
+        "mysql:host=$host;dbname=$dbname;port=3306;charset=utf8",
         $user_db,
         $password
     );
+    // Bật chế độ báo lỗi
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
     
-} catch (Exception $ex) {
+} catch (PDOException $ex) {
     echo "❌ Kết nối thất bại: " . $ex->getMessage();
 }
 ?>
