@@ -36,10 +36,12 @@
           <i class="bi bi-truck service-icon"></i><br>
           <small>Giao hàng nhanh</small>
         </div>
+         <a href="../Page/Cart.php" class="text-decoration-none text-dark">
         <div>
           <i class="bi bi-cart service-icon"></i><br>
           <small>Giỏ hàng</small>
         </div>
+         </a>
       </div>
     </div>
 

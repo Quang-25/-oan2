@@ -63,11 +63,12 @@ include __DIR__ . "/../config/db.php";
                   <img src="<?php echo $row['images']; ?>"
                     class="product-img"
                     alt="<?php echo $row['products_name']; ?>">
+                  
 
                   <!-- Overlay icon -->
                   <div class="icon-overlay d-flex justify-content-center align-items-center">
                     <a href="ProductDetail.php?id=<?php echo $row['id_product']; ?>" class="icon-btn"><i class="bi bi-eye"></i></a>
-                    <a href="Cart.php?add=<?php echo $row['id_product']; ?>" class="icon-btn"><i class="bi bi-cart-plus"></i></a>
+                    <a href="Page/Cart.php?id=<?php echo $row['id_product']; ?>" class="icon-btn"><i class="bi bi-cart-plus"></i></a>
                     <a href="#" class="icon-btn"><i class="bi bi-heart"></i></a>
                     <a href="#" class="icon-btn"><i class="bi bi-arrow-repeat"></i></a>
                   </div>
@@ -85,13 +86,46 @@ include __DIR__ . "/../config/db.php";
           <?php } ?>
         </div>
       </div>
+      <div class= "banner2">
+        <img src="https://demo037030.web30s.vn/datafiles/32835/upload/images/img-banner-1.jpg?t=1752894235" class="banner-2" alt="banner">
+      </div>
+      <h2 class="nameproduct">Sản phẩm mới</h2>
+     <div class="row">
+<?php
+    // Lấy sản phẩm mới nhất
+    $sql = "SELECT * FROM products ORDER BY id_product DESC LIMIT 8";
+    $stmt = $conn->query($sql);
 
+    while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+?>
+    <div class="col-md-3 mb-4">
+        <div class="product-card">
+            <div class="product-img">
+                <img src="<?php echo htmlspecialchars($row['image1']); ?>" 
+                     alt="<?php echo htmlspecialchars($row['products_name']); ?>" 
+                >
+                <div class="product-actions">
+                    <a href="Product.php?id=<?php  echo $row['id_product']; ?>"><i class="bi bi-eye"></i></a>
+                    <a href="Page/Cart.php?id=<?php echo $row['id_product']; ?>"><i class="bi bi-cart"></i></a>
+                    <a href="#"><i class="bi bi-heart"></i></a>
+                    <a href="#"><i class="bi bi-arrow-repeat"></i></a>
+                </div>
+            </div>
+            <div class="product-info text-center">
+                <h6><?php echo $row['products_name']; ?></h6>
+                <p class="price text-danger fw-bold">
+                    <?php echo number_format($row['price'],0,',','.'); ?> đ
+                </p>
+            </div>
+        </div>
+    </div>
+<?php } ?>
+</div>
 
-      <!-- JS -->
       <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
       <script>
-        var swiper = new Swiper(".mySwiper", {
+        var swiper = new Swiper(".mySwiper",{
           loop: true,
           autoplay: {
             delay: 3000,
@@ -127,7 +161,7 @@ include __DIR__ . "/../config/db.php";
             }
           }
         });
+      
       </script>
 </body>
-
 </html>
