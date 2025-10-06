@@ -80,6 +80,18 @@
   font-size: 20px;
   font-weight: bold;
 }
+.nameproduct {
+  display: inline-block;    /* ✅ Giúp nền đỏ chỉ dài bằng chữ */
+  background: #d60000;      /* Nền đỏ */
+  color: #fff;              /* Chữ trắng */
+  padding: 6px 15px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  border-bottom: 3px solid #a00000; /* Viền dưới nhẹ nếu muốn giống ảnh bên phải */
+}
+
+
 
 .nav-buttons {
   display: flex;
@@ -146,4 +158,73 @@
 .icon-btn:hover {
   background: #900;
 }
+.banner-2 {
+  width: 100%;
+  height: 100%;
+  margin: 10px 0;
+  border-radius: 8px;
+  padding-top: 5px;
+  
+}
+.product-card {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    transition: all 0.3s ease;
+    text-align: center;
+}
 
+.product-card:hover {
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
+}
+
+.product-img {
+    position: relative;
+    overflow: hidden;
+}
+
+.product-img img {
+    width: 100%;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.05);
+}
+
+.product-actions {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-actions a {
+  width: 40px;
+  height: 40px;
+  background: #c00;
+  color: #fff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.product-actions a:hover {
+    background: #da2121;
+}
+
+.product-card:hover .product-actions {
+    opacity: 1;
+}
+
+.product-info {
+    padding: 10px;
+}
