@@ -117,11 +117,118 @@ include __DIR__ . "/../config/db.php";
                     <?php echo number_format($row['price'],0,',','.'); ?> đ
                 </p>
             </div>
-        </div>
+          </div>
     </div>
 <?php } ?>
+</div> 
+    </div>
+    <section class="py-4" style="background-color: #d32f2f; color: white;">
+  <div class="container">
+    <div class="row text-center">
+      <div class="col-md-3 mb-3">
+        <i class="bi bi-truck display-5 mb-2"></i>
+        <h6 class="fw-bold">MIỄN PHÍ GIAO HÀNG</h6>
+        <p>Hóa đơn từ 1 triệu trở lên</p>
+      </div>
+      <div class="col-md-3 mb-3">
+        <i class="bi bi-credit-card display-5 mb-2"></i>
+        <h6 class="fw-bold">THANH TOÁN</h6>
+        <p>Hình thức đa dạng, thuận tiện</p>
+      </div>
+      <div class="col-md-3 mb-3">
+        <i class="bi bi-gift display-5 mb-2"></i>
+        <h6 class="fw-bold">CHẤT LƯỢNG</h6>
+        <p>100% từ nhà cung cấp uy tín</p>
+      </div>
+      <div class="col-md-3 mb-3">
+        <i class="bi bi-wallet2 display-5 mb-2"></i>
+        <h6 class="fw-bold">GIÁ CẢ HỢP LÝ</h6>
+        <p>Cam kết đúng giá thị trường</p>
+      </div>
+    </div>
+  </div>
+</section>
+   <div class="news-section container my-5">
+  <h3 class="text-center mb-4 fw-bold text-danger">
+    TIN TỨC SỰ KIỆN
+  </h3>
+  <div class="row g-4">
+    <!-- Tin 1 -->
+    <div class="col-md-3">
+      <div class="news-card shadow-sm h-100">
+        <img src="http://nld.mediacdn.vn/thumb_w/698/2020/12/3/ch-1606990235879905251373.jpg"
+             class="news-img" alt="tin tức 1">
+        <div class="news-body">
+          <p class="news-meta text-muted mb-2">
+            <i class="bi bi-calendar3 text-danger"></i> 11/12/2020 &nbsp;&nbsp;
+            <i class="bi bi-eye text-danger"></i> 162
+          </p>
+          <h6 class="news-title fw-bold">Vừa phòng dịch vừa chuẩn bị hàng Tết</h6>
+          <p class="news-desc small text-muted mb-0">
+            Saigon Co.op tăng cường nguồn hàng dự trữ trên toàn hệ thống, chuẩn bị chu đáo các kịch bản cung ứng và ưu đãi...
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tin 2 -->
+    <div class="col-md-3">
+      <div class="news-card shadow-sm h-100">
+        <img src="https://cdn.nhandan.vn/images/7f491ee6c6b660425d7c9ab03f1ec4473dc1d95f7c5255d1cd927efff1b924d1013e12fe4c7c0d801c6e3969e7f3399902477dacb7745cc4f5f9ad33cbcbec23/a1-1607418973395.jpeg"
+             class="news-img" alt="tin tức 2">
+        <div class="news-body">
+          <p class="news-meta text-muted mb-2">
+            <i class="bi bi-calendar3 text-danger"></i> 11/12/2020 &nbsp;&nbsp;
+            <i class="bi bi-eye text-danger"></i> 222
+          </p>
+          <h6 class="news-title fw-bold">Saigon Co.op dự trữ lượng lớn hàng hóa phục vụ Tết</h6>
+          <p class="news-desc small text-muted mb-0">
+            Liên hiệp HTX Thương mại TP.HCM cho biết đã chuẩn bị sẵn sàng hàng hóa thiết yếu phục vụ mùa Tết...
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tin 3 -->
+    <div class="col-md-3">
+      <div class="news-card shadow-sm h-100">
+        <img src="http://nld.mediacdn.vn/thumb_w/698/2020/12/10/cha-16075945009551486610887.jpg"
+             class="news-img" alt="tin tức 3">
+        <div class="news-body">
+          <p class="news-meta text-muted mb-2">
+            <i class="bi bi-calendar3 text-danger"></i> 02/12/2020 &nbsp;&nbsp;
+            <i class="bi bi-eye text-danger"></i> 259
+          </p>
+          <h6 class="news-title fw-bold">Thị trường Tết thời Covid-19 có gì khác?</h6>
+          <p class="news-desc small text-muted mb-0">
+            Co.opmart, Co.opXtra, HTVCo.op... đang cố gắng giữ giá bình ổn và tung nhiều chương trình khuyến mãi hấp dẫn.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tin 4 -->
+    <div class="col-md-3">
+      <div class="news-card shadow-sm h-100">
+        <img src="https://cafebiz.cafebizcdn.vn/thumb_w/640/pr/2020/1607067642371-0-0-893-1429-crop-1607067648655-63742698431308.jpg"
+             class="news-img" alt="tin tức 4">
+        <div class="news-body">
+          <p class="news-meta text-muted mb-2">
+            <i class="bi bi-calendar3 text-danger"></i> 02/12/2020 &nbsp;&nbsp;
+            <i class="bi bi-eye text-danger"></i> 180
+          </p>
+          <h6 class="news-title fw-bold">Độc đáo giỏ quà Tết được thiết kế riêng cho doanh nghiệp</h6>
+          <p class="news-desc small text-muted mb-0">
+            Người tiêu dùng có xu hướng chọn giỏ quà Tết thiết kế riêng, sang trọng và mang phong cách cá nhân hóa.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+   
 </div>
 
+ 
       <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
       <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
       <script>
