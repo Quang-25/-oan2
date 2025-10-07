@@ -294,4 +294,21 @@ section i:hover {
 .news-desc {
   color: #666;
 }
+.footer {
+  background-color: #efa9a9;
+}
 
+.footer-row {
+  justify-content: center; /* căn giữa 3 cột */
+  gap: 100px; /* tạo khoảng cách đều hai bên */
+}
+
+.footer h5 {
+  margin-bottom: 14px;
+  font-weight: bold;
+}
+
+.footer p {
+  margin-bottom: 6px;
+  font-size: 14px;
+}
