@@ -18,8 +18,9 @@ include __DIR__ . "/../config/db.php";
 
 <body>
   <!-- Gọi Header -->
-  <?php include "include/Header.php"; ?>
+  <?php include(__DIR__ . "/../include/Header.php");?>
 
+ 
   <!-- Slider -->
   <div class="swiper mySwiper">
     <div class="swiper-wrapper">
@@ -160,7 +161,7 @@ include __DIR__ . "/../config/db.php";
              class="news-img" alt="tin tức 1">
         <div class="news-body">
           <p class="news-meta text-muted mb-2">
-            <i class="bi bi-calendar3 text-danger"></i> 11/12/2020 &nbsp;&nbsp;
+            <i class="bi bi-calendar3 text-danger"></i> 07/10/2025 &nbsp;&nbsp;
             <i class="bi bi-eye text-danger"></i> 162
           </p>
           <h6 class="news-title fw-bold">Vừa phòng dịch vừa chuẩn bị hàng Tết</h6>
@@ -178,7 +179,7 @@ include __DIR__ . "/../config/db.php";
              class="news-img" alt="tin tức 2">
         <div class="news-body">
           <p class="news-meta text-muted mb-2">
-            <i class="bi bi-calendar3 text-danger"></i> 11/12/2020 &nbsp;&nbsp;
+            <i class="bi bi-calendar3 text-danger"></i> 07/10/2025 &nbsp;&nbsp;
             <i class="bi bi-eye text-danger"></i> 222
           </p>
           <h6 class="news-title fw-bold">Saigon Co.op dự trữ lượng lớn hàng hóa phục vụ Tết</h6>
@@ -196,7 +197,7 @@ include __DIR__ . "/../config/db.php";
              class="news-img" alt="tin tức 3">
         <div class="news-body">
           <p class="news-meta text-muted mb-2">
-            <i class="bi bi-calendar3 text-danger"></i> 02/12/2020 &nbsp;&nbsp;
+            <i class="bi bi-calendar3 text-danger"></i> 07/10/2025 &nbsp;&nbsp;
             <i class="bi bi-eye text-danger"></i> 259
           </p>
           <h6 class="news-title fw-bold">Thị trường Tết thời Covid-19 có gì khác?</h6>
@@ -214,7 +215,7 @@ include __DIR__ . "/../config/db.php";
              class="news-img" alt="tin tức 4">
         <div class="news-body">
           <p class="news-meta text-muted mb-2">
-            <i class="bi bi-calendar3 text-danger"></i> 02/12/2020 &nbsp;&nbsp;
+            <i class="bi bi-calendar3 text-danger"></i> 07/10/2025 &nbsp;&nbsp;
             <i class="bi bi-eye text-danger"></i> 180
           </p>
           <h6 class="news-title fw-bold">Độc đáo giỏ quà Tết được thiết kế riêng cho doanh nghiệp</h6>
@@ -225,7 +226,6 @@ include __DIR__ . "/../config/db.php";
       </div>
     </div>
   </div>
-   
 </div>
 
  
@@ -270,5 +270,6 @@ include __DIR__ . "/../config/db.php";
         });
       
       </script>
+      <?php include(__DIR__ . "/../include/Footer.php");?>
 </body>
 </html>

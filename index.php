@@ -28,5 +28,5 @@ switch($page) {
 }
 
 // Gọi footer
-include "include/Footer.php";
+
 ?>
