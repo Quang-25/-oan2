@@ -47,7 +47,7 @@
     </div>
     <div class="col-md-4">
   <!-- Form tìm kiếm -->
-  <form method="GET" action="">
+  <form method="GET" action="../Page/Product.php">
     <div class="input-group">
       <input 
         type="text" 
