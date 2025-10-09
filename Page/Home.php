@@ -95,7 +95,7 @@ include __DIR__ . "/../config/db.php";
         <?php
         // Lấy sản phẩm mới nhất
         $sql = "SELECT * FROM products ORDER BY id_product DESC LIMIT 8";
-        $stmt = $conn->query($sql);
+        $stmt =  $conn->query($sql);
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         ?>
@@ -312,12 +312,12 @@ include __DIR__ . "/../config/db.php";
         });
 
       } else {
-        alert(data.message || '❌ Có lỗi xảy ra khi đặt hàng.');
+        alert(data.message || ' Có lỗi xảy ra khi đặt hàng.');
       }
     })
     .catch(err => {
       console.error(err);
-      alert('⚠️ Lỗi kết nối server.');
+      alert(' Lỗi kết nối server.');
     });
   });
 });
