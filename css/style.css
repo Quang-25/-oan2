@@ -52,6 +52,32 @@
   margin: 0 4px;
   transition: background-color 0.3s;
 }
+.topbar {
+  background-color: #f2b3b3; /* màu hồng nhạt */
+  color: #333;
+  font-size: 14px;
+ 
+}
+
+.topbar i {
+  color: #333;
+  margin-right: 5px;
+}
+
+.topbar .top-link {
+  color: #333;
+  text-decoration: none;
+}
+
+.topbar .top-link:hover {
+  text-decoration: underline;
+}
+
+.topbar img {
+  width: 30px;
+  height: 20px;
+  object-fit: cover;
+}
 
 .swiper-pagination-bullet-active {
   background-color: #dc3545; /* màu đỏ kiểu Bootstrap */
@@ -80,6 +106,18 @@
   font-size: 20px;
   font-weight: bold;
 }
+.nameproduct {
+  display: inline-block;    /* ✅ Giúp nền đỏ chỉ dài bằng chữ */
+  background: #d60000;      /* Nền đỏ */
+  color: #fff;              /* Chữ trắng */
+  padding: 6px 15px;
+  font-size: 20px;
+  font-weight: bold;
+  margin-bottom: 15px;
+  border-bottom: 3px solid #a00000; /* Viền dưới nhẹ nếu muốn giống ảnh bên phải */
+}
+
+
 
 .nav-buttons {
   display: flex;
@@ -145,5 +183,115 @@
 }
 .icon-btn:hover {
   background: #900;
+}
+.banner-2 {
+  width: 100%;
+  height: 100%;
+  margin: 10px 0;
+  border-radius: 8px;
+  padding-top: 5px;
+  
+}
+.product-card {
+    border: 1px solid #eee;
+    border-radius: 10px;
+    overflow: hidden;
+    background: #fff;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.product-card:hover {
+    box-shadow: 0px 4px 15px rgba(0,0,0,0.2);
+}
+
+.product-img {
+    position: relative;
+    overflow: hidden;
+}
+
+.product-img img {
+    width: 100%;
+    display: block;
+    transition: transform 0.4s ease;
+}
+
+.product-card:hover img {
+    transform: scale(1.05);
+}
+
+.product-actions {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    gap: 10px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.product-actions a {
+  width: 40px;
+  height: 40px;
+  background: #c00;
+  color: #fff;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+}
+
+.product-actions a:hover {
+    background: #da2121;
+}
+
+.product-card:hover .product-actions {
+    opacity: 1;
+}
+
+.product-info {
+    padding: 10px;
+}
+section i {
+  transition: transform 0.3s ease;
+}
+section i:hover {
+  transform: scale(1.2);
+  color: #ffeb3b;
+}
+.news-card {
+  border-radius: 10px;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: #fff;
+}
+
+.news-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.news-img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.news-body {
+  padding: 15px;
+}
+
+.news-meta i {
+  font-size: 0.9rem;
+}
+
+.news-title {
+  color: #000;
+}
+
+.news-desc {
+  color: #666;
 }
 

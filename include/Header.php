@@ -13,6 +13,34 @@
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> <!-- icon -->
   <link rel="stylesheet" href="../css/style.css">
 </head>
+<!-- Top Bar -->
+<div class="topbar py-1">
+  <div class="container d-flex justify-content-between align-items-center flex-wrap">
+    
+    <!-- Bên trái -->
+    <div class="d-flex align-items-center flex-wrap">
+      <span class="me-3">
+        <i class="bi-house-door-fill"></i>
+       Số 16, Phố Hữu Nghị, Phường Tùng Thiện, Thành Phố Hà Nội
+      </span>
+      <span>
+        <i class="bi bi-envelope-fill"></i>
+        Đại Học Công Nghiệp Việt Hung
+      </span>
+    </div>
+
+    <!-- Bên phải -->
+    <div class="d-flex align-items-center flex-wrap mt-1 mt-md-0">
+      <a href="Page/login.php" class="top-link me-3">Đăng nhập</a>
+      <a href="Page/register.php" class="top-link me-3">Đăng ký</a>
+      <a href="#" class="top-link me-3">So sánh</a>
+      <a href="#" class="top-link me-3">Yêu thích</a>
+      <img src="https://cf.shopee.vn/file/1b135b8d27f4fa192b801d2e576cbb67" alt="VN" class="me-2 rounded">
+      <img src="https://media.viu.edu.vn/Media/2_TSVIU/FolderFunc/202203/Images/logo-20220317084549-e.png" alt="US" class="rounded">
+    </div>
+
+  </div>
+</div>
 <div class="container py-3">
   <div class="row align-items-center">
     <div class="col-md-3">
@@ -36,10 +64,12 @@
           <i class="bi bi-truck service-icon"></i><br>
           <small>Giao hàng nhanh</small>
         </div>
+         <a href="../Page/Cart.php" class="text-decoration-none text-dark">
         <div>
           <i class="bi bi-cart service-icon"></i><br>
           <small>Giỏ hàng</small>
         </div>
+         </a>
       </div>
     </div>
 
