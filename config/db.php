@@ -10,10 +10,8 @@ try {
         $user_db,
         $password
     );
-    // Bật chế độ báo lỗi
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
-    
+    // echo "✅ Kết nối thành công!";
 } catch (PDOException $ex) {
     echo "❌ Kết nối thất bại: " . $ex->getMessage();
 }

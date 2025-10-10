@@ -1,7 +1,6 @@
 <?php
     require __DIR__ . "/../config/db.php";
 
-     
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -47,12 +46,44 @@
       <img src="https://demo037030.web30s.vn/datafiles/32835/upload/images/logo_gift.png?t=1752894235" alt="Logo" class="img-fluid">
     </div>
     <div class="col-md-4">
-      <div class="input-group">
-        <input type="text" class="form-control" placeholder="Nhập từ khóa...">
-        <button class="btn btn-outline-secondary" type="button"><i class="bi bi-search"></i></button>
-      </div>
+  <!-- Form tìm kiếm -->
+  <form method="GET" action="../Page/Product.php">
+    <div class="input-group">
+      <input 
+        type="text" 
+        name="keyword" 
+        value="<?= isset($_GET['keyword']) ? htmlspecialchars($_GET['keyword']) : '' ?>" 
+        class="form-control" 
+        placeholder="Nhập từ khóa...">
+      <button class="btn btn-outline-secondary" type="submit">
+        <i class="bi bi-search"></i>
+      </button>
     </div>
+  </form>
 
+  <?php // đảm bảo đã kết nối PDO
+  $keyword = '';
+  if (isset($_GET['keyword'])) {
+      $keyword = trim($_GET['keyword']); // loại bỏ khoảng trắng đầu/cuối
+  }
+
+  try {
+      if ($keyword != '') {
+          $sql = "SELECT * FROM products WHERE products_name LIKE :keyword";
+          $stmt = $conn->prepare($sql);
+          $stmt->bindValue(':keyword', '%' . $keyword . '%');
+      } else {
+          $sql = "SELECT * FROM products";
+          $stmt = $conn->prepare($sql);
+      }
+
+      $stmt->execute();
+      $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+  } catch (PDOException $e) {
+      echo "Lỗi truy vấn: " . $e->getMessage();
+  }
+  ?>
+</div>
     <!-- Dịch vụ -->
     <div class="col-md-3 text-center">
       <div class="d-flex justify-content-around">
