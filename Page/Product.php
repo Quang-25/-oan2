@@ -5,7 +5,7 @@ $categories = [];
 $category = $_GET['category'] ?? '';
 $priceRange = $_GET['price'] ?? '';
 $sort = $_GET['sort'] ?? 'default';
-
+include __DIR__ . "/../Page.backend/Product.backend.php";
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -13,6 +13,8 @@ $sort = $_GET['sort'] ?? 'default';
   <meta charset="UTF-8">
   <title>Danh sách sản phẩm</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  
   <link rel="stylesheet" href="../css/product.css">
   
     
@@ -82,6 +84,7 @@ $sort = $_GET['sort'] ?? 'default';
       </div>
     </div>
   </div>
+         
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

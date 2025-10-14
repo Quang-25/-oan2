@@ -30,14 +30,13 @@ require __DIR__ . "/../config/db.php";
 
     <!-- Bên phải -->
     <div class="d-flex align-items-center flex-wrap mt-1 mt-md-0">
-      <a href="Page/login.php" class="top-link me-3">Đăng nhập</a>
-      <a href="Page/register.php" class="top-link me-3">Đăng ký</a>
-      <a href="#" class="top-link me-3">So sánh</a>
+      <a href="../Page/login.php" class="top-link me-3">Đăng nhập</a>
+      <a href="../Page/register.php" class="top-link me-3">Đăng ký</a>
+      <a href="../Page/logout.php" class="top-link me-3">Đăng xuất</a>
       <a href="#" class="top-link me-3">Yêu thích</a>
       <img src="https://cf.shopee.vn/file/1b135b8d27f4fa192b801d2e576cbb67" alt="VN" class="me-2 rounded">
       <img src="https://media.viu.edu.vn/Media/2_TSVIU/FolderFunc/202203/Images/logo-20220317084549-e.png" alt="Viu" class="rounded">
     </div>
-
   </div>
 </div>
 <div class="container py-3">
