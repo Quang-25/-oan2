@@ -1,7 +1,7 @@
 <?php
 include __DIR__ . "/../config/db.php";
 session_start();
-
+ 
 $msg = "";
 
 // Khi người dùng gửi form
@@ -35,20 +35,22 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="vi">
 <head>
 <meta charset="UTF-8">
 <title>Đăng nhập</title>
+
 <style>
-body {
+body2 {
     background: url('../Page/hop-qua-tet-banh-keo-dep-2021.jpg') no-repeat center center fixed;
     background-size: cover; /* Giữ tỉ lệ ảnh, phóng vừa đủ để phủ toàn màn hình */
     background-attachment: fixed;
     background-repeat: no-repeat;
     font-family: Arial, sans-serif;
 }
-.container {
+.container2 {
     width: 450px;
     background: rgba(255, 255, 255, 0.85);
     margin: 80px auto;
@@ -102,8 +104,9 @@ a:hover {
 }
 </style>
 </head>
-<body>
-<div class="container">
+<?php include(__DIR__ . "/../include/Header.php");?>
+<body class="body2">
+<div class="container2">
     <h2>ĐĂNG NHẬP</h2>
     <p>Trang chủ / <span style="color:red;">Đăng nhập</span></p>
 

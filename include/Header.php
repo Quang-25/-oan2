@@ -1,26 +1,26 @@
 <?php
-    require __DIR__ . "/../config/db.php";
-
+require __DIR__ . "/../config/db.php";
 ?>
 <!DOCTYPE html>
 <html lang="vi">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Giỏ Quà Tết Việt</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> <!-- icon -->
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/header.css">
 </head>
 <!-- Top Bar -->
 <div class="topbar py-1">
   <div class="container d-flex justify-content-between align-items-center flex-wrap">
-    
+
     <!-- Bên trái -->
     <div class="d-flex align-items-center flex-wrap">
       <span class="me-3">
         <i class="bi-house-door-fill"></i>
-       Số 16, Phố Hữu Nghị, Phường Tùng Thiện, Thành Phố Hà Nội
+        Số 16, Phố Hữu Nghị, Phường Tùng Thiện, Thành Phố Hà Nội
       </span>
       <span>
         <i class="bi bi-envelope-fill"></i>
@@ -35,7 +35,7 @@
       <a href="#" class="top-link me-3">So sánh</a>
       <a href="#" class="top-link me-3">Yêu thích</a>
       <img src="https://cf.shopee.vn/file/1b135b8d27f4fa192b801d2e576cbb67" alt="VN" class="me-2 rounded">
-      <img src="https://media.viu.edu.vn/Media/2_TSVIU/FolderFunc/202203/Images/logo-20220317084549-e.png" alt="US" class="rounded">
+      <img src="https://media.viu.edu.vn/Media/2_TSVIU/FolderFunc/202203/Images/logo-20220317084549-e.png" alt="Viu" class="rounded">
     </div>
 
   </div>
@@ -46,44 +46,44 @@
       <img src="https://demo037030.web30s.vn/datafiles/32835/upload/images/logo_gift.png?t=1752894235" alt="Logo" class="img-fluid">
     </div>
     <div class="col-md-4">
-  <!-- Form tìm kiếm -->
-  <form method="GET" action="../Page/Product.php">
-    <div class="input-group">
-      <input 
-        type="text" 
-        name="keyword" 
-        value="<?= isset($_GET['keyword']) ? htmlspecialchars($_GET['keyword']) : '' ?>" 
-        class="form-control" 
-        placeholder="Nhập từ khóa...">
-      <button class="btn btn-outline-secondary" type="submit">
-        <i class="bi bi-search"></i>
-      </button>
-    </div>
-  </form>
+      <!-- Form tìm kiếm -->
+      <form method="GET" action="../Page/Product.php">
+        <div class="input-group">
+          <input
+            type="text"
+            name="keyword"
+            value="<?= isset($_GET['keyword']) ? htmlspecialchars($_GET['keyword']) : '' ?>"
+            class="form-control"
+            placeholder="Nhập từ khóa...">
+          <button class="btn btn-outline-secondary" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+      </form>
 
-  <?php // đảm bảo đã kết nối PDO
-  $keyword = '';
-  if (isset($_GET['keyword'])) {
-      $keyword = trim($_GET['keyword']); // loại bỏ khoảng trắng đầu/cuối
-  }
+      <?php // đảm bảo đã kết nối PDO
+      $keyword = '';
+      if (isset($_GET['keyword'])) {
+        $keyword = trim($_GET['keyword']); // loại bỏ khoảng trắng đầu/cuối
+      }
 
-  try {
-      if ($keyword != '') {
+      try {
+        if ($keyword != '') {
           $sql = "SELECT * FROM products WHERE products_name LIKE :keyword";
           $stmt = $conn->prepare($sql);
           $stmt->bindValue(':keyword', '%' . $keyword . '%');
-      } else {
+        } else {
           $sql = "SELECT * FROM products";
           $stmt = $conn->prepare($sql);
-      }
+        }
 
-      $stmt->execute();
-      $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-  } catch (PDOException $e) {
-      echo "Lỗi truy vấn: " . $e->getMessage();
-  }
-  ?>
-</div>
+        $stmt->execute();
+        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+      } catch (PDOException $e) {
+        echo "Lỗi truy vấn: " . $e->getMessage();
+      }
+      ?>
+    </div>
     <!-- Dịch vụ -->
     <div class="col-md-3 text-center">
       <div class="d-flex justify-content-around">
@@ -95,12 +95,12 @@
           <i class="bi bi-truck service-icon"></i><br>
           <small>Giao hàng nhanh</small>
         </div>
-         <a href="../Page/Cart.php" class="text-decoration-none text-dark">
-        <div>
-          <i class="bi bi-cart service-icon"></i><br>
-          <small>Giỏ hàng</small>
-        </div>
-         </a>
+        <a href="../Page/Cart.php" class="text-decoration-none text-dark">
+          <div>
+            <i class="bi bi-cart service-icon"></i><br>
+            <small>Giỏ hàng</small>
+          </div>
+        </a>
       </div>
     </div>
 
@@ -117,7 +117,7 @@
   <div class="container-fluid justify-content-center">
     <ul class="navbar-nav">
 
-      <li class="nav-item"><a class="nav-link" href="#">TRANG CHỦ</a></li>
+      <li class="nav-item"><a class="nav-link" href="../Page/Home.php">TRANG CHỦ</a></li>
       <li class="nav-item"><a class="nav-link" href="#">GIỚI THIỆU</a></li>
 
       <!-- GIỎ QUÀ -->
@@ -140,7 +140,7 @@
         </ul>
       </li>
 
-      
+
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">TÚI QUÀ TẾT</a>
         <ul class="dropdown-menu">
@@ -152,7 +152,7 @@
 
       <li class="nav-item"><a class="nav-link" href="#">KHUYẾN MÃI</a></li>
 
-      
+
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">DỊCH VỤ</a>
         <ul class="dropdown-menu">
@@ -181,5 +181,5 @@
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-</html>
 
+</html>

@@ -68,13 +68,8 @@ include __DIR__ . "/../config/db.php";
 
                   <!-- Overlay icon -->
                   <div class="icon-overlay d-flex justify-content-center align-items-center">
-<<<<<<< HEAD
-                    <a href="Product details.php?id=<?php echo $row['id_product']; ?>" class="icon-btn"><i class="bi bi-eye"></i></a>
-                    <a href="Page/Cart.php?id=<?php echo $row['id_product']; ?>" class="icon-btn"><i class="bi bi-cart-plus"></i></a>
-=======
                     <a href="ProductDetail.php?id=<?php echo $row['id_product']; ?>" class="icon-btn"><i class="bi bi-eye"></i></a>
                     <a href="#" class="icon-btn add-to-cart" data-id="<?php echo $row['id_product']; ?>"><i class="bi bi-cart-plus"></i></a>
->>>>>>> 6da50dce1eaf948c0255d50a2a66ac381254061e
                     <a href="#" class="icon-btn"><i class="bi bi-heart"></i></a>
                     <a href="#" class="icon-btn"><i class="bi bi-arrow-repeat"></i></a>
                   </div>
@@ -100,7 +95,7 @@ include __DIR__ . "/../config/db.php";
         <?php
         // Lấy sản phẩm mới nhất
         $sql = "SELECT * FROM products ORDER BY id_product DESC LIMIT 8";
-        $stmt = $conn->query($sql);
+        $stmt =  $conn->query($sql);
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
         ?>
@@ -309,7 +304,7 @@ include __DIR__ . "/../config/db.php";
         // 👉 Nút "Tiếp tục mua sắm"
         document.getElementById('continueShopping').addEventListener('click', () => {
           popup.remove();
-        });
+      });
 
         // 👉 Nút "Xem giỏ hàng"
         document.getElementById('goToCart').addEventListener('click', () => {
@@ -317,12 +312,12 @@ include __DIR__ . "/../config/db.php";
         });
 
       } else {
-        alert(data.message || '❌ Có lỗi xảy ra khi đặt hàng.');
+        alert(data.message || ' Có lỗi xảy ra khi đặt hàng.');
       }
     })
     .catch(err => {
       console.error(err);
-      alert('⚠️ Lỗi kết nối server.');
+      alert(' Lỗi kết nối server.');
     });
   });
 });
