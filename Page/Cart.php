@@ -27,7 +27,7 @@ if (isset($_GET['id'])) {
         }
         $_SESSION['message'] = "✅ Đã thêm sản phẩm <b>{$product['products_name']}</b> vào giỏ hàng!";
     }
-    header("Location: Cart.php");
+    header("Locationggg: Cart.php");
     exit();
 }
 
