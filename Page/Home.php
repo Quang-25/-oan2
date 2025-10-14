@@ -304,7 +304,7 @@ include __DIR__ . "/../config/db.php";
         // 👉 Nút "Tiếp tục mua sắm"
         document.getElementById('continueShopping').addEventListener('click', () => {
           popup.remove();
-        });
+      });
 
         // 👉 Nút "Xem giỏ hàng"
         document.getElementById('goToCart').addEventListener('click', () => {

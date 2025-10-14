@@ -1,6 +1,5 @@
 <?php
 require __DIR__ . "/../config/db.php";
-
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -11,7 +10,7 @@ require __DIR__ . "/../config/db.php";
   <title>Giỏ Quà Tết Việt</title>
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet"> <!-- icon -->
-  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="../css/header.css">
 </head>
 <!-- Top Bar -->
 <div class="topbar py-1">
@@ -118,7 +117,7 @@ require __DIR__ . "/../config/db.php";
   <div class="container-fluid justify-content-center">
     <ul class="navbar-nav">
 
-      <li class="nav-item"><a class="nav-link" href="#">TRANG CHỦ</a></li>
+      <li class="nav-item"><a class="nav-link" href="../Page/Home.php">TRANG CHỦ</a></li>
       <li class="nav-item"><a class="nav-link" href="#">GIỚI THIỆU</a></li>
 
       <!-- GIỎ QUÀ -->
