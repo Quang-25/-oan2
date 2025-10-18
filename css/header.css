@@ -2,7 +2,7 @@
     background-color: #d32f2f;
     padding-top: 0.2rem;
    padding-bottom: 0.2rem;
-}
+} 
 .navbar .nav-link {
     color: #fff !important;
     font-weight: bold;
@@ -72,3 +72,6 @@ a.dropdown-item:hover {
 .swiper-pagination-bullet-active {
   background-color: #dc3545; /* màu đỏ kiểu Bootstrap */
 }
+ 
+
+

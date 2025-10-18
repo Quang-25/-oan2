@@ -197,7 +197,7 @@ setTimeout(() => {
 </div>
 
 <div class="text-end mt-3">
-    <a href="../Page/Home.php" class="btn btn-red2 me-2">XEM THÊM SẢN PHẨM</a>
+    <a href="../Page/Product.php" class="btn btn-red2 me-2">XEM THÊM SẢN PHẨM</a>
     <a href="../Page/payment.php" class="btn btn-red2">THANH TOÁN</a>
 </div>
 
