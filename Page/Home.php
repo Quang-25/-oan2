@@ -232,97 +232,98 @@ include __DIR__ . "/../config/db.php";
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-      var swiper = new Swiper(".mySwiper", {
-        loop: true,
-        autoplay: {
-          delay: 3000,
-          disableOnInteraction: false,
-        },
-        pagination: {
-          el: ".swiper-pagination",
-          clickable: true,
-        },
-        effect: "fade",
-        speed: 1000
-      });
-      var swiper = new Swiper(".mySwiperProducts", {
-        slidesPerView: 4,
-        spaceBetween: 20,
-        loop: true,
-        navigation: {
-          nextEl: ".swiper-next",
-          prevEl: ".swiper-prev",
-        },
-        breakpoints: {
-          0: {
-            slidesPerView: 1
-          },
-          576: {
-            slidesPerView: 2
-          },
-          768: {
-            slidesPerView: 3
-          },
-          992: {
-            slidesPerView: 4
-          }
-        }
-      });
-      document.querySelectorAll('.add-to-cart').forEach(btn => {
-  btn.addEventListener('click', function(e) {
-    e.preventDefault();
-    const productId = this.dataset.id;
+  var swiper = new Swiper(".mySwiper", {
+    loop: true,
+    autoplay: {
+      delay: 3000,
+      disableOnInteraction: false,
+    },
+    pagination: {
+      el: ".swiper-pagination",
+      clickable: true,
+    },
+    effect: "fade",
+    speed: 1000
+  });
 
-    fetch('../Page.backend/home.backend.php', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
-      },
-      body: new URLSearchParams({
-        action: 'orderNow',
-        product_id: productId
+  var swiper = new Swiper(".mySwiperProducts", {
+    slidesPerView: 4,
+    spaceBetween: 20,
+    loop: true,
+    navigation: {
+      nextEl: ".swiper-next",
+      prevEl: ".swiper-prev",
+    },
+    breakpoints: {
+      0: { slidesPerView: 1 },
+      576: { slidesPerView: 2 },
+      768: { slidesPerView: 3 },
+      992: { slidesPerView: 4 }
+    }
+  });
+
+  // 🛒 Xử lý thêm vào giỏ hàng
+  document.querySelectorAll('.add-to-cart').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+      e.preventDefault();
+      const productId = this.dataset.id;
+
+      fetch('../Page.backend/home.backend.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        },
+        body: new URLSearchParams({
+          action: 'orderNow',
+          product_id: productId
+        })
       })
-    })
-    .then(res => res.json())
-    .then(data => {
-      if (data.success) {
-        // 🟢 Tạo popup thông báo đặt hàng thành công
-        const popup = document.createElement('div');
-        popup.innerHTML = `
-          <div class="position-fixed top-50 start-50 translate-middle bg-white border rounded shadow-lg p-4 text-center" 
-               style="z-index: 1055; min-width: 300px;">
-            <h5 class="text-success mb-3">${data.message || '🛒 Đặt hàng thành công!'}</h5>
-            <p>Bạn có muốn tiếp tục mua sắm không?</p>
-            <div class="d-flex justify-content-center gap-3 mt-3">
-              <button id="continueShopping" class="btn btn-outline-secondary">Tiếp tục</button>
-              <button id="goToCart" class="btn btn-danger">Xem giỏ hàng</button>
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+
+          // ✅ Cập nhật số lượng giỏ hàng hiển thị
+          const cartCountElements = document.querySelectorAll('#cart-count');
+          cartCountElements.forEach(el => {
+            el.textContent = data.cart_count;
+          });
+
+          // 🟢 Hiện popup thông báo thành công
+          const popup = document.createElement('div');
+          popup.innerHTML = `
+            <div class="position-fixed top-50 start-50 translate-middle bg-white border rounded shadow-lg p-4 text-center" 
+                style="z-index: 1055; min-width: 300px;">
+              <h5 class="text-success mb-3">${data.message || '🛒 Thêm vào giỏ hàng thành công!'}</h5>
+              <p>Bạn có muốn tiếp tục mua sắm không?</p>
+              <div class="d-flex justify-content-center gap-3 mt-3">
+                <button id="continueShopping" class="btn btn-outline-secondary">Tiếp tục</button>
+                <button id="goToCart" class="btn btn-danger">Xem giỏ hàng</button>
+              </div>
             </div>
-          </div>
-          <div class="position-fixed top-0 start-0 w-100 h-100 bg-dark opacity-50" style="z-index: 1050;"></div>
-        `;
-        document.body.appendChild(popup);
+            <div class="position-fixed top-0 start-0 w-100 h-100 bg-dark opacity-50" style="z-index: 1050;"></div>
+          `;
+          document.body.appendChild(popup);
 
-        // 👉 Nút "Tiếp tục mua sắm"
-        document.getElementById('continueShopping').addEventListener('click', () => {
-          popup.remove();
+          // 👉 Nút "Tiếp tục mua sắm"
+          document.getElementById('continueShopping').addEventListener('click', () => popup.remove());
+          
+          // 👉 Nút "Xem giỏ hàng"
+          document.getElementById('goToCart').addEventListener('click', () => {
+            window.location.href = '../Page/Cart.php';
+          });
+
+        } else {
+          alert(data.message || 'Có lỗi xảy ra khi thêm sản phẩm.');
+        }
+      })
+      .catch(err => {
+        console.error(err);
+        alert('Lỗi kết nối server.');
       });
-
-        // 👉 Nút "Xem giỏ hàng"
-        document.getElementById('goToCart').addEventListener('click', () => {
-          window.location.href = '../Page/Cart.php';
-        });
-
-      } else {
-        alert(data.message || ' Có lỗi xảy ra khi đặt hàng.');
-      }
-    })
-    .catch(err => {
-      console.error(err);
-      alert(' Lỗi kết nối server.');
     });
   });
-});
-    </script>
+</script>
+
     <?php include(__DIR__ . "/../include/Footer.php"); ?>
 </body>
 

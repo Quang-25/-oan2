@@ -1,5 +1,7 @@
 <?php
-require __DIR__ . "/../config/db.php";
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -45,21 +47,20 @@ require __DIR__ . "/../config/db.php";
       <img src="https://demo037030.web30s.vn/datafiles/32835/upload/images/logo_gift.png?t=1752894235" alt="Logo" class="img-fluid">
     </div>
     <div class="col-md-4">
-      <!-- Form tìm kiếm -->
-      <form method="GET" action="../Page/Product.php">
-        <div class="input-group">
-          <input
-            type="text"
-            name="keyword"
-            value="<?= isset($_GET['keyword']) ? htmlspecialchars($_GET['keyword']) : '' ?>"
-            class="form-control"
-            placeholder="Nhập từ khóa...">
-          <button class="btn btn-outline-secondary" type="submit">
-            <i class="bi bi-search"></i>
-          </button>
-        </div>
-      </form>
-
+  <!-- Form tìm kiếm -->
+  <form method="GET" action="../Page/Product.php">
+    <div class="input-group">
+      <input
+        type="text"
+        name="keyword"
+        value="<?= isset($_GET['keyword']) ? htmlspecialchars($_GET['keyword']) : '' ?>"
+        class="form-control"
+        placeholder="Nhập từ khóa...">
+      <button class="btn btn-outline-secondary" type="submit">
+        <i class="bi bi-search"></i>
+      </button>
+    </div>
+  </form>
       <?php // đảm bảo đã kết nối PDO
       $keyword = '';
       if (isset($_GET['keyword'])) {
@@ -83,6 +84,7 @@ require __DIR__ . "/../config/db.php";
       }
       ?>
     </div>
+
     <!-- Dịch vụ -->
     <div class="col-md-3 text-center">
       <div class="d-flex justify-content-around">
@@ -94,9 +96,14 @@ require __DIR__ . "/../config/db.php";
           <i class="bi bi-truck service-icon"></i><br>
           <small>Giao hàng nhanh</small>
         </div>
-        <a href="../Page/Cart.php" class="text-decoration-none text-dark">
+        
           <div>
+            <a href="../Page/Cart.php" class="position-relative text-decoration-none text-dark">
             <i class="bi bi-cart service-icon"></i><br>
+            <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
+            <?= isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0 ?>
+           </span>
+          </a>
             <small>Giỏ hàng</small>
           </div>
         </a>
@@ -120,38 +127,30 @@ require __DIR__ . "/../config/db.php";
       <li class="nav-item"><a class="nav-link" href="#">GIỚI THIỆU</a></li>
 
       <!-- GIỎ QUÀ -->
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">GIỎ QUÀ</a>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Từ 1 Triệu đến 2 Triệu</a></li>
-          <li><a class="dropdown-item" href="#">Từ 700K đến 1 Triệu</a></li>
-          <li><a class="dropdown-item" href="#">Từ 300K đến 700K</a></li>
-        </ul>
-      </li>
+      <!-- GIỎ QUÀ -->
+<li class="nav-item dropdown">
+  <div class="d-flex align-items-center">
+    <a class="nav-link" href="../Page/Product.php">GIỎ QUÀ</a>
+    <a class="nav-link dropdown-toggle ps-1" href="#" data-bs-toggle="dropdown"></a>
+  </div>
+</li>
 
-      <!-- HỘP QUÀ -->
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">HỘP QUÀ</a>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Từ 1 Triệu đến 2 Triệu</a></li>
-          <li><a class="dropdown-item" href="#">Từ 700k đến 1 Triệu</a></li>
-          <li><a class="dropdown-item" href="#">Từ 300k đến 700k</a></li>
-        </ul>
-      </li>
+<!-- HỘP QUÀ -->
+<li class="nav-item dropdown">
+  <div class="d-flex align-items-center">
+    <a class="nav-link" href="../Page/Product.php">HỘP QUÀ</a>
+    <a class="nav-link dropdown-toggle ps-1" href="#" data-bs-toggle="dropdown"></a>
+  </div>
+</li>
 
-
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">TÚI QUÀ TẾT</a>
-        <ul class="dropdown-menu">
-          <li><a class="dropdown-item" href="#">Từ 1 Triệu đến 2 Triệu</a></li>
-          <li><a class="dropdown-item" href="#">Từ 700k đến 1 Triệu</a></li>
-          <li><a class="dropdown-item" href="#">Từ 300k đến 700k</a></li>
-        </ul>
-      </li>
-
+<!-- TÚI QUÀ -->
+<li class="nav-item dropdown">
+  <div class="d-flex align-items-center">
+    <a class="nav-link" href="../Page/Product.php">TÚI QUÀ</a>
+    <a class="nav-link dropdown-toggle ps-1" href="#" data-bs-toggle="dropdown"></a>
+  </div>
+</li>
       <li class="nav-item"><a class="nav-link" href="#">KHUYẾN MÃI</a></li>
-
-
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">DỊCH VỤ</a>
         <ul class="dropdown-menu">
@@ -176,6 +175,10 @@ require __DIR__ . "/../config/db.php";
     </ul>
   </div>
 </nav>
+</nav>
+</html>
+
+
 
 <!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

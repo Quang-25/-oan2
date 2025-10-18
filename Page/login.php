@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <title>Đăng nhập</title>
 
 <style>
-body2 {
+.body2 {
     background: url('../Page/hop-qua-tet-banh-keo-dep-2021.jpg') no-repeat center center fixed;
     background-size: cover; /* Giữ tỉ lệ ảnh, phóng vừa đủ để phủ toàn màn hình */
     background-attachment: fixed;
