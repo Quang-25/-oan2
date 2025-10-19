@@ -19,10 +19,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && password_verify($password, $user["Password"])) {
+                $_SESSION["ID_user"] = $user["ID_user"];
                 $_SESSION["username"] = $user["Username"];
                 $_SESSION["name"] = $user["Name"];
                 $_SESSION["roles"] = $user["roles"];
-
                 // ✅ Chuyển sang trang home.php
                 header("Location: home.php");
                 exit();

@@ -69,7 +69,7 @@ include __DIR__ . "/../config/db.php";
 
                   <!-- Overlay icon -->
                   <div class="icon-overlay d-flex justify-content-center align-items-center">
-                    <a href="ProductDetail.php?id=<?php echo $row['id_product']; ?>" class="icon-btn"><i class="bi bi-eye"></i></a>
+                    <a href="Productdetail.php?id=<?php echo $row['id_product']; ?>" class="icon-btn"><i class="bi bi-eye"></i></a>
                     <a href="#" class="icon-btn add-to-cart" data-id="<?php echo $row['id_product']; ?>"><i class="bi bi-cart-plus"></i></a>
                     <a href="#" class="icon-btn"><i class="bi bi-heart"></i></a>
                     <a href="#" class="icon-btn"><i class="bi bi-arrow-repeat"></i></a>
