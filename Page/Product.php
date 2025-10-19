@@ -20,7 +20,10 @@ include __DIR__ . "/../Page.backend/Product.backend.php";
 </head>
 
 <body>
-  
+  <div class="sp-header">
+    <h2>SẢN PHẨM</h2>
+    <div>Trang chủ / <span>Sản Phẩm</span></div>
+</div>
 <div class="container-fluid mt-4">
   <div class="row">
     <div class="col-md-3">

@@ -126,3 +126,20 @@
     margin: 10px 0;
     border-color: #eee;
   }
+  .sp-header {
+    background-color: #e6e6e6;
+    padding: 40px 0;
+    text-align: center;
+}
+.sp-header h2 {
+    color: #b30000;
+    font-weight: 700;
+    margin: 0;
+}
+.sp-header div {
+    margin-top: 5px;
+    font-size: 15px;
+}
+.sp-header span {
+    color: #c50000;
+}
