@@ -316,7 +316,7 @@ include __DIR__ . "/../config/db.php";
           alert(data.message || 'Có lỗi xảy ra khi thêm sản phẩm.');
         }
       })
-      .catch(err => {
+       .catch(err => {
         console.error(err);
         alert('Lỗi kết nối server.');
       });
