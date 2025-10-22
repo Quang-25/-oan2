@@ -2,57 +2,57 @@
 session_start();
 include("../config/db.php");
 
-// ===== Thêm sản phẩm vào giỏ hàng =====
-if (isset($_GET['id'])) {
-    $id = intval($_GET['id']);
-    $sql = "SELECT * FROM products WHERE id_product = :id";
-    $stmt = $conn->prepare($sql);
-    $stmt->execute(['id' => $id]);
-    $product = $stmt->fetch(PDO::FETCH_ASSOC);
+// --- Lấy ID user nếu có ---
+$ID_user = $_SESSION['ID_user'] ?? null;
 
-    if ($product) {
-        if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
-
-        if (isset($_SESSION['cart'][$id])) {
-            $_SESSION['cart'][$id]['quantity'] += 1;
-        } else {
-            $_SESSION['cart'][$id] = [
-                'id' => $product['id_product'],
-                'name' => $product['products_name'],
-                'price' => $product['price'],
-                'images' => $product['images'] ?? '',
-                'image1' => $product['image1'] ?? '',
-                'quantity' => 1
-            ];
-        }
-        $_SESSION['message'] = "✅ Đã thêm sản phẩm <b>{$product['products_name']}</b> vào giỏ hàng!";
-    }
-    header("Locationggg: Cart.php");
-    exit();
-}
-
-// ===== Xóa sản phẩm =====
+// --- Xóa sản phẩm khỏi giỏ hàng ---
 if (isset($_GET['remove'])) {
     $remove_id = intval($_GET['remove']);
     if (isset($_SESSION['cart'][$remove_id])) {
         unset($_SESSION['cart'][$remove_id]);
         $_SESSION['message'] = "✅ Đã xóa sản phẩm khỏi giỏ hàng!";
+
+        // Nếu user đăng nhập thì xóa luôn trong bảng orders
+        if ($ID_user) {
+            $delete = $conn->prepare("DELETE FROM orders WHERE User_ID = :uid AND Product_ID = :pid");
+            $delete->execute(['uid' => $ID_user, 'pid' => $remove_id]);
+        }
     }
     header("Location: Cart.php");
     exit();
 }
 
-// ===== Cập nhật số lượng =====
+// --- Cập nhật số lượng sản phẩm ---
 if (isset($_POST['action']) && $_POST['action'] === 'update_qty') {
     $id = intval($_POST['id']);
     $qty = intval($_POST['qty']);
+
     if (isset($_SESSION['cart'][$id])) {
+        // Giữ tối thiểu 1 sản phẩm
         $_SESSION['cart'][$id]['quantity'] = max(1, $qty);
+
         $subtotal = $_SESSION['cart'][$id]['price'] * $_SESSION['cart'][$id]['quantity'];
         $total = 0;
         foreach ($_SESSION['cart'] as $item) {
             $total += $item['price'] * $item['quantity'];
         }
+
+        // Nếu user đăng nhập -> cập nhật trong orders
+        if ($ID_user) {
+            $update = $conn->prepare("
+                UPDATE orders
+                SET quantity = :qty, totalamount = :subtotal, order_date = NOW()
+                WHERE User_ID = :uid AND Product_ID = :pid
+            ");
+            $update->execute([
+                'qty' => $qty,
+                'subtotal' => $subtotal,
+                'uid' => $ID_user,
+                'pid' => $id
+            ]);
+        }
+
+        // Gửi lại subtotal + total để AJAX cập nhật
         echo json_encode([
             'subtotal' => number_format($subtotal, 0, ',', '.') . ' đ',
             'total' => number_format($total, 0, ',', '.') . ' đ'
@@ -61,8 +61,13 @@ if (isset($_POST['action']) && $_POST['action'] === 'update_qty') {
     exit;
 }
 
+// --- Tính tổng giá trị giỏ hàng ---
 $total = 0;
+foreach ($_SESSION['cart'] ?? [] as $item) {
+    $total += $item['price'] * $item['quantity'];
+}
 ?>
+
 
 <!DOCTYPE html>
 <html lang="vi">

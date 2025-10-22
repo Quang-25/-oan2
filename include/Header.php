@@ -1,6 +1,7 @@
 <?php
+
 if (session_status() === PHP_SESSION_NONE) {
-    session_start();
+  session_start();
 }
 ?>
 <!DOCTYPE html>
@@ -47,42 +48,20 @@ if (session_status() === PHP_SESSION_NONE) {
       <img src="https://demo037030.web30s.vn/datafiles/32835/upload/images/logo_gift.png?t=1752894235" alt="Logo" class="img-fluid">
     </div>
     <div class="col-md-4">
-  <!-- Form tìm kiếm -->
-  <form method="GET" action="../Page/Product.php">
-    <div class="input-group">
-      <input
-        type="text"
-        name="keyword"
-        value="<?= isset($_GET['keyword']) ? htmlspecialchars($_GET['keyword']) : '' ?>"
-        class="form-control"
-        placeholder="Nhập từ khóa...">
-      <button class="btn btn-outline-secondary" type="submit">
-        <i class="bi bi-search"></i>
-      </button>
-    </div>
-  </form>
-      <?php // đảm bảo đã kết nối PDO
-      $keyword = '';
-      if (isset($_GET['keyword'])) {
-        $keyword = trim($_GET['keyword']); // loại bỏ khoảng trắng đầu/cuối
-      }
-
-      try {
-        if ($keyword != '') {
-          $sql = "SELECT * FROM products WHERE products_name LIKE :keyword";
-          $stmt = $conn->prepare($sql);
-          $stmt->bindValue(':keyword', '%' . $keyword . '%');
-        } else {
-          $sql = "SELECT * FROM products";
-          $stmt = $conn->prepare($sql);
-        }
-
-        $stmt->execute();
-        $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-      } catch (PDOException $e) {
-        echo "Lỗi truy vấn: " . $e->getMessage();
-      }
-      ?>
+      <!-- Form tìm kiếm -->
+      <form method="GET" action="../Page/Product.php">
+        <div class="input-group">
+          <input
+            type="text"
+            name="keyword"
+            value="<?= isset($_GET['keyword']) ? htmlspecialchars($_GET['keyword']) : '' ?>"
+            class="form-control"
+            placeholder="Nhập từ khóa...">
+          <button class="btn btn-outline-secondary" type="submit">
+            <i class="bi bi-search"></i>
+          </button>
+        </div>
+      </form>
     </div>
 
     <!-- Dịch vụ -->
@@ -96,17 +75,17 @@ if (session_status() === PHP_SESSION_NONE) {
           <i class="bi bi-truck service-icon"></i><br>
           <small>Giao hàng nhanh</small>
         </div>
-        
-          <div>
-            <a href="../Page/Cart.php" class="position-relative text-decoration-none text-dark">
+        <div>
+          <a href="../Page/Cart.php" class="position-relative text-decoration-none text-dark">
             <i class="bi bi-cart service-icon"></i><br>
             <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger">
-            <?= isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0 ?>
-           </span>
-          </a>
+              <?= isset($_SESSION['cart']) ? count($_SESSION['cart']) : 0 ?>
+            </span>
             <small>Giỏ hàng</small>
-          </div>
-        </a>
+          </a>
+        </div>
+
+
       </div>
     </div>
 
@@ -128,28 +107,28 @@ if (session_status() === PHP_SESSION_NONE) {
 
       <!-- GIỎ QUÀ -->
       <!-- GIỎ QUÀ -->
-<li class="nav-item dropdown">
-  <div class="d-flex align-items-center">
-    <a class="nav-link" href="../Page/Product.php">GIỎ QUÀ</a>
-    <a class="nav-link dropdown-toggle ps-1" href="#" data-bs-toggle="dropdown"></a>
-  </div>
-</li>
+      <li class="nav-item dropdown">
+        <div class="d-flex align-items-center">
+          <a class="nav-link" href="../Page/Product.php">GIỎ QUÀ</a>
+          <a class="nav-link dropdown-toggle ps-1" href="#" data-bs-toggle="dropdown"></a>
+        </div>
+      </li>
 
-<!-- HỘP QUÀ -->
-<li class="nav-item dropdown">
-  <div class="d-flex align-items-center">
-    <a class="nav-link" href="../Page/Product.php">HỘP QUÀ</a>
-    <a class="nav-link dropdown-toggle ps-1" href="#" data-bs-toggle="dropdown"></a>
-  </div>
-</li>
+      <!-- HỘP QUÀ -->
+      <li class="nav-item dropdown">
+        <div class="d-flex align-items-center">
+          <a class="nav-link" href="../Page/Product.php">HỘP QUÀ</a>
+          <a class="nav-link dropdown-toggle ps-1" href="#" data-bs-toggle="dropdown"></a>
+        </div>
+      </li>
 
-<!-- TÚI QUÀ -->
-<li class="nav-item dropdown">
-  <div class="d-flex align-items-center">
-    <a class="nav-link" href="../Page/Product.php">TÚI QUÀ</a>
-    <a class="nav-link dropdown-toggle ps-1" href="#" data-bs-toggle="dropdown"></a>
-  </div>
-</li>
+      <!-- TÚI QUÀ -->
+      <li class="nav-item dropdown">
+        <div class="d-flex align-items-center">
+          <a class="nav-link" href="../Page/Product.php">TÚI QUÀ</a>
+          <a class="nav-link dropdown-toggle ps-1" href="#" data-bs-toggle="dropdown"></a>
+        </div>
+      </li>
       <li class="nav-item"><a class="nav-link" href="#">KHUYẾN MÃI</a></li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">DỊCH VỤ</a>
@@ -176,6 +155,7 @@ if (session_status() === PHP_SESSION_NONE) {
   </div>
 </nav>
 </nav>
+
 </html>
 
 
