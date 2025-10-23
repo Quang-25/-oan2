@@ -56,13 +56,13 @@ include __DIR__ . "/../Page.backend/payment.login.php";
                         </div>
                     </div>
 
-                    <p class="section-header"><i class="bi bi-credit-card-fill me-2"></i>HÌNH THỨC THANH TOÁN</p>
+                    <p class="section-header"><i class="bi bi-credit-card-fill me-2"></i>Phương THỨC THANH TOÁN</p>
                     <div class="form-check mb-2">
-                        <input class="form-check-input" type="radio" name="payment_method" value="COD" checked>
+                        <input class="form-check-input" type="radio" name="payment_method" value="Thanh Toán Khi Nhận Hàng" checked>
                         <label class="form-check-label">Thanh toán khi nhận hàng (COD)</label>
                     </div>
                     <div class="form-check">
-                        <input class="form-check-input" type="radio" name="payment_method" value="BANK">
+                        <input class="form-check-input" type="radio" name="payment_method" value="Chuyển Khoản Ngân Hàng">
                         <label class="form-check-label">Chuyển khoản ngân hàng</label>
                     </div>
                 </div>
