@@ -77,10 +77,11 @@ include __DIR__ . "/../Page.backend/Product.backend.php";
                 </div>
 
                 <div class="product-icons2">
-                  <a href="#"><i class="bi bi-eye"></i></a>
-                  <a href="#"><i class="bi bi-heart"></i></a>
+                  <a href="Productdetail.php?id=<?php echo $row['id_product']; ?>" class="icon-btn"><i class="bi bi-eye"></i></a>
                   <a href="#" class="add-to-cart" data-id="<?= htmlspecialchars($row['id_product']) ?>">
-                <i class="bi bi-cart-plus"></i>
+                  <i class="bi bi-cart-plus"></i>
+                  </a>
+                  <a href="#"><i class="bi bi-heart"></i></a>
              </a>
             <a href="#"><i class="bi bi-arrow-repeat"></i></a>
             </div>
