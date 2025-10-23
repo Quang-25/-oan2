@@ -2,57 +2,59 @@
 session_start();
 include("../config/db.php");
 
-// --- Lấy ID user nếu có ---
-$ID_user = $_SESSION['ID_user'] ?? null;
+// ===== Thêm sản phẩm vào giỏ hàng =====
+if (isset($_GET['id'])) {
+    $id = intval($_GET['id']);
+    $sql = "SELECT * FROM products WHERE id_product = :id";
+    $stmt = $conn->prepare($sql);
+    $stmt->execute(['id' => $id]);
+    $product = $stmt->fetch(PDO::FETCH_ASSOC);
 
-// --- Xóa sản phẩm khỏi giỏ hàng ---
-if (isset($_GET['remove'])) {
-    $remove_id = intval($_GET['remove']);
-    if (isset($_SESSION['cart'][$remove_id])) {
-        unset($_SESSION['cart'][$remove_id]);
-        $_SESSION['message'] = "✅ Đã xóa sản phẩm khỏi giỏ hàng!";
+    if ($product) {
+        if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
 
-        // Nếu user đăng nhập thì xóa luôn trong bảng orders
-        if ($ID_user) {
-            $delete = $conn->prepare("DELETE FROM orders WHERE User_ID = :uid AND Product_ID = :pid");
-            $delete->execute(['uid' => $ID_user, 'pid' => $remove_id]);
+        // ✅ Ưu tiên chọn ảnh chính xác (images → image1 → image2)
+        $imagePath = $product['images'] ?: ($product['image1'] ?: ($product['image2'] ?: '../images/no-image.jpg'));
+
+        if (isset($_SESSION['cart'][$id])) {
+            $_SESSION['cart'][$id]['quantity'] += 1;
+        } else {
+            $_SESSION['cart'][$id] = [
+                'id' => $product['id_product'],
+                'name' => $product['products_name'],
+                'price' => $product['price'],
+                'image' => $imagePath, // 🔥 Dùng key thống nhất "image"
+                'quantity' => 1
+            ];
         }
+        $_SESSION['message'] = "✅ Đã thêm sản phẩm <b>{$product['products_name']}</b> vào giỏ hàng!";
     }
     header("Location: Cart.php");
     exit();
 }
 
-// --- Cập nhật số lượng sản phẩm ---
+// ===== Xóa sản phẩm =====
+if (isset($_GET['remove'])) {
+    $remove_id = intval($_GET['remove']);
+    if (isset($_SESSION['cart'][$remove_id])) {
+        unset($_SESSION['cart'][$remove_id]);
+        $_SESSION['message'] = "✅ Đã xóa sản phẩm khỏi giỏ hàng!";
+    }
+    header("Location: Cart.php");
+    exit();
+}
+
+// ===== Cập nhật số lượng =====
 if (isset($_POST['action']) && $_POST['action'] === 'update_qty') {
     $id = intval($_POST['id']);
     $qty = intval($_POST['qty']);
-
     if (isset($_SESSION['cart'][$id])) {
-        // Giữ tối thiểu 1 sản phẩm
         $_SESSION['cart'][$id]['quantity'] = max(1, $qty);
-
         $subtotal = $_SESSION['cart'][$id]['price'] * $_SESSION['cart'][$id]['quantity'];
         $total = 0;
         foreach ($_SESSION['cart'] as $item) {
             $total += $item['price'] * $item['quantity'];
         }
-
-        // Nếu user đăng nhập -> cập nhật trong orders
-        if ($ID_user) {
-            $update = $conn->prepare("
-                UPDATE orders
-                SET quantity = :qty, totalamount = :subtotal, order_date = NOW()
-                WHERE User_ID = :uid AND Product_ID = :pid
-            ");
-            $update->execute([
-                'qty' => $qty,
-                'subtotal' => $subtotal,
-                'uid' => $ID_user,
-                'pid' => $id
-            ]);
-        }
-
-        // Gửi lại subtotal + total để AJAX cập nhật
         echo json_encode([
             'subtotal' => number_format($subtotal, 0, ',', '.') . ' đ',
             'total' => number_format($total, 0, ',', '.') . ' đ'
@@ -61,12 +63,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'update_qty') {
     exit;
 }
 
-// --- Tính tổng giá trị giỏ hàng ---
 $total = 0;
-
-
 ?>
-
 
 <!DOCTYPE html>
 <html lang="vi">
@@ -77,7 +75,6 @@ $total = 0;
 <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
 
 <style>
-
 .cart-header {
     background-color: #e6e6e6;
     padding: 40px 0;
@@ -165,15 +162,13 @@ setTimeout(() => {
 
 <?php if (!empty($_SESSION['cart'])): ?>
 
-
 <?php foreach ($_SESSION['cart'] as $item): 
     $subtotal = $item['price'] * $item['quantity'];
     $total += $subtotal;
 
-    $mainImg = trim($item['images'] ?? '');
-    $altImg  = trim($item['image1'] ?? '');
-    $imgPath = !empty($mainImg) ? $mainImg : $altImg;
-    if (empty($imgPath)) $imgPath = "../images/no-image.jpg";
+    // ✅ Chọn ảnh hiển thị đúng (images → image1 → image2)
+    $imgPath = $item['image'] ?? '../images/no-image.jpg';
+    if (empty(trim($imgPath))) $imgPath = "../images/no-image.jpg";
 ?>
 
 <div class="row align-items-center border-bottom py-3">
@@ -194,6 +189,7 @@ setTimeout(() => {
         <a href="Cart.php?remove=<?= $item['id']; ?>" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i></a>
     </div>
 </div>
+
 <?php endforeach; ?>
 
 <div class="total-row">
