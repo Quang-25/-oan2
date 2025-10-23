@@ -1,9 +1,10 @@
 <?php
 include __DIR__ . "/../config/db.php";
-
+session_start();
 // 1. Lấy ID sản phẩm từ URL và kiểm tra
 $product_id = $_GET['id'] ?? null;
 $product = null;
+
 
 if ($product_id) {
     try {
