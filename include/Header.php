@@ -1,5 +1,4 @@
 <?php
-
 if (session_status() === PHP_SESSION_NONE) {
   session_start();
 }
@@ -84,49 +83,22 @@ if (session_status() === PHP_SESSION_NONE) {
             <small>Giỏ hàng</small>
           </a>
         </div>
-
-
       </div>
     </div>
-
-    <!-- Hotline -->
     <div class="col-md-2 text-end">
       <small>Hotline miễn phí</small><br>
       <span class="hotline">1900 9477</span>
     </div>
   </div>
 </div>
-
-<!-- Menu dưới -->
 <nav class="navbar navbar-expand-lg">
   <div class="container-fluid justify-content-center">
     <ul class="navbar-nav">
-
       <li class="nav-item"><a class="nav-link" href="../Page/Home.php">TRANG CHỦ</a></li>
       <li class="nav-item"><a class="nav-link" href="#">GIỚI THIỆU</a></li>
-
-      <!-- GIỎ QUÀ -->
-      <!-- GIỎ QUÀ -->
       <li class="nav-item dropdown">
         <div class="d-flex align-items-center">
-          <a class="nav-link" href="../Page/Product.php">GIỎ QUÀ</a>
-          <a class="nav-link dropdown-toggle ps-1" href="#" data-bs-toggle="dropdown"></a>
-        </div>
-      </li>
-
-      <!-- HỘP QUÀ -->
-      <li class="nav-item dropdown">
-        <div class="d-flex align-items-center">
-          <a class="nav-link" href="../Page/Product.php">HỘP QUÀ</a>
-          <a class="nav-link dropdown-toggle ps-1" href="#" data-bs-toggle="dropdown"></a>
-        </div>
-      </li>
-
-      <!-- TÚI QUÀ -->
-      <li class="nav-item dropdown">
-        <div class="d-flex align-items-center">
-          <a class="nav-link" href="../Page/Product.php">TÚI QUÀ</a>
-          <a class="nav-link dropdown-toggle ps-1" href="#" data-bs-toggle="dropdown"></a>
+          <a class="nav-link" href="../Page/Product.php">SẢN PHẨM</a>
         </div>
       </li>
       <li class="nav-item"><a class="nav-link" href="#">KHUYẾN MÃI</a></li>
@@ -138,8 +110,6 @@ if (session_status() === PHP_SESSION_NONE) {
           <li><a class="dropdown-item" href="#">Vận chuyển giao quà tết tận nhà</a></li>
         </ul>
       </li>
-
-      <!-- TIN TỨC -->
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">TIN TỨC</a>
         <ul class="dropdown-menu">
@@ -147,7 +117,6 @@ if (session_status() === PHP_SESSION_NONE) {
           <li><a class="dropdown-item" href="#">Mẹo chọn quà</a></li>
         </ul>
       </li>
-
       <li class="nav-item"><a class="nav-link" href="#">THƯ VIỆN ẢNH</a></li>
       <li class="nav-item"><a class="nav-link" href="#">VIDEO</a></li>
       <li class="nav-item"><a class="nav-link" href="#">LIÊN HỆ</a></li>
@@ -157,10 +126,6 @@ if (session_status() === PHP_SESSION_NONE) {
 </nav>
 
 </html>
-
-
-
-<!-- Bootstrap JS -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 

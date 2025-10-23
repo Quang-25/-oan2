@@ -63,9 +63,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'update_qty') {
 
 // --- Tính tổng giá trị giỏ hàng ---
 $total = 0;
-foreach ($_SESSION['cart'] ?? [] as $item) {
-    $total += $item['price'] * $item['quantity'];
-}
+
+
 ?>
 
 
