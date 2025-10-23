@@ -113,10 +113,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                 $mail->isHTML(true);
                 $mail->Subject = 'Xác nhận đơn hàng từ Giỏ Hàng Tết Việt';
                 $mail->Body = "
-                    <h3>Xin chào {$formData['fullname']},</h3>
+                    <h3>Xin chào {$formData['fullname']}</h3>
                     <p>Cảm ơn bạn đã đặt hàng tại <strong>Giỏ Hàng Tết Việt</strong>!</p>
                     <p>Địa chỉ giao hàng: <strong>{$formData['address']}</strong></p>
-                    <p>Liên hệ: <strong>{$formData['phone']}</strong></p>
+                    <p>SĐT Liên hệ: <strong>{$formData['phone']}</strong></p>
                     <p>Phương thức thanh toán: <strong>{$payment_method}</strong></p>
                     <br><p>Trân trọng,<br>Đội ngũ Giỏ Hàng Tết Việt</p>";
                 $mail->send();
