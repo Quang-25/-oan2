@@ -159,5 +159,6 @@ a:hover {
         </div>
     </form>
 </div>
+<?php include(__DIR__ . "/../include/Footer.php"); ?>
 </body>
 </html>

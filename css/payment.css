@@ -15,3 +15,87 @@
 .pm-header span {
     color: #c50000;
 }
+
+:root {
+    /* Đây là màu đỏ chủ đạo của bạn. 
+       Bạn có thể đổi sang mã màu đỏ bất kỳ (ví dụ: #dc3545, #e74c3c) */
+    --primary-red: #D9534F;
+    --primary-red-dark: #C9302C;
+}
+
+
+
+
+/*
+ * ======================================
+ * THẺ CARD (Chung)
+ * ======================================
+ */
+
+.section-header {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+    border-bottom: 1px solid #f0f0f0;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+.section-header .bi {
+    color: var(--primary-red); /* 🔴 Icon màu đỏ */
+}
+
+.section-header:not(:first-child) {
+    margin-top: 2rem; /* 🌟 Đây là điểm "chia form" quan trọng! */
+    border-top: 1px solid #f0f0f0;
+    padding-top: 1.25rem;
+}
+
+.form-control:focus {
+    border-color: var(--primary-red);
+    box-shadow: 0 0 0 0.25rem rgba(217, 83, 79, 0.25);
+}
+
+
+.form-check-input:checked {
+    background-color: var(--primary-red);
+    border-color: var(--primary-red);
+}
+
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.25rem rgba(217, 83, 79, 0.25);
+}
+.summary-card .card-header {
+    border-bottom: 2px solid var(--primary-red);
+    background-color: #fff;
+}
+
+.summary-card .card-header h5 {
+    color: var(--primary-red);
+    font-weight: 700;
+}
+
+
+.summary-card .card-body .d-flex.justify-content-between {
+    padding-bottom: 1rem;
+    border-bottom: 1px dashed #e0e0e0;
+}
+/* Bỏ đường viền cho item cuối cùng trước khi tới <hr> */
+.summary-card .card-body hr {
+    margin-top: 0;
+}
+
+/* 3. 🔴 Nút "Thanh Toán" */
+.btn-primary {
+    background-color: var(--primary-red);
+    border-color: var(--primary-red);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 0.75rem; /* Nút to, rõ ràng hơn */
+}
+
+.btn-primary:hover {
+    background-color: var(--primary-red-dark);
+    border-color: var(--primary-red-dark);
+}
