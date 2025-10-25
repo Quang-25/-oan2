@@ -9,9 +9,15 @@ if (!isset($_SESSION['ID_user'])) {
 }
 
 $User_ID = $_SESSION['ID_user'];
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'orderNow') {
     $product_id = intval($_POST['product_id']);
-    $quantity = 1;
+    $quantity_to_add = intval($_POST['quantity'] ?? 1); 
+
+    if ($quantity_to_add <= 0) {
+        echo json_encode(['success' => false, 'message' => '❌ Số lượng không hợp lệ!']);
+        exit;
+    }
 
     // 🔹 Lấy thông tin sản phẩm
     $stmt = $conn->prepare("SELECT * FROM products WHERE id_product = :id");
@@ -22,34 +28,53 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         echo json_encode(['success' => false, 'message' => '❌ Không tìm thấy sản phẩm!']);
         exit;
     }
-  if ($product['quantitySold'] >= $product['totalquantity']) {
+
+    // 🔹 Kiểm tra tồn kho
+    if ($product['quantitySold'] >= $product['totalquantity']) {
         echo json_encode(['success' => false, 'message' => '❌ Sản phẩm đã hết hàng, không thể thêm vào giỏ!']);
         exit;
     }
+
     // 🔹 Chọn ảnh hợp lệ
     $imagePath = $product['images'] ?: ($product['image1'] ?: ($product['image2'] ?: '../images/no-image.jpg'));
 
-    // 🔹 Khởi tạo giỏ hàng
-    if (!isset($_SESSION['cart'])) {
-        $_SESSION['cart'] = [];
-    }
+    // ==============================
+    // 🧠 PHẦN 1: Lưu vào SESSION
+    // ==============================
+    if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
 
-    // 🔹 Thêm hoặc cập nhật sản phẩm
     if (isset($_SESSION['cart'][$product_id])) {
-        // Nếu sản phẩm đã tồn tại, chỉ tăng số lượng
-        $_SESSION['cart'][$product_id]['quantity'] += $quantity;
+        $_SESSION['cart'][$product_id]['quantity'] += $quantity_to_add;
     } else {
-        // Nếu sản phẩm mới, thêm mới vào giỏ
         $_SESSION['cart'][$product_id] = [
             'id'       => $product['id_product'],
             'name'     => $product['products_name'],
             'price'    => $product['price'],
             'image'    => $imagePath,
-            'quantity' => $quantity
+            'quantity' => $quantity_to_add
         ];
     }
 
-    // ✅ Chỉ đếm số LOẠI sản phẩm (không tính tổng quantity)
+    // ==============================
+    // 💾 PHẦN 2: Lưu vào DATABASE (bảng user_carts)
+    // ==============================
+    // Kiểm tra xem sản phẩm này đã có trong giỏ của user chưa
+    $check = $conn->prepare("SELECT * FROM user_carts WHERE user_id = :uid AND product_id = :pid");
+    $check->execute(['uid' => $User_ID, 'pid' => $product_id]);
+    $existing = $check->fetch(PDO::FETCH_ASSOC);
+
+    if ($existing) {
+        // Nếu đã có → cập nhật số lượng
+        $newQty = $existing['quantity'] + $quantity_to_add;
+        $update = $conn->prepare("UPDATE user_carts SET quantity = :qty WHERE user_id = :uid AND product_id = :pid");
+        $update->execute(['qty' => $newQty, 'uid' => $User_ID, 'pid' => $product_id]);
+    } else {
+        // Nếu chưa có → thêm mới
+        $insert = $conn->prepare("INSERT INTO user_carts (user_id, product_id, quantity) VALUES (:uid, :pid, :qty)");
+        $insert->execute(['uid' => $User_ID, 'pid' => $product_id, 'qty' => $quantity_to_add]);
+    }
+
+    // ✅ Đếm số loại sản phẩm trong session
     $cart_count = count($_SESSION['cart']);
 
     echo json_encode([
@@ -59,5 +84,4 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     ]);
     exit;
 }
-
 ?>
