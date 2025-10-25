@@ -68,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                 $quantity = $item['quantity'];
                 $totalamount = $item['price'] * $quantity;
 
-                // ✅ Thêm quantity vào INSERT để tránh lỗi
+                // ✅ Lưu đơn hàng
                 $sql = "INSERT INTO orders (quantity, totalamount, User_ID, Product_ID, order_date, payment_method)
                         VALUES (:quantity, :totalamount, :user_id, :product_id, :order_date, :payment_method)";
                 $stmt = $conn->prepare($sql);
@@ -81,7 +81,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                     ':payment_method' => $payment_method
                 ]);
 
-                // 🔹 Trừ số lượng trong bảng products
+                // 🔹 Cập nhật tồn kho
                 $updateSql = "UPDATE products 
                               SET totalquantity = totalquantity - :qty, 
                                   quantitySold = quantitySold + :qty 
@@ -92,6 +92,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                     ':pid' => $product_id
                 ]);
             }
+
+            // ✅ Sau khi lưu đơn hàng → xóa giỏ hàng (user_carts)
+            $deleteCart = "DELETE FROM user_carts WHERE user_id = :user_id";
+            $stmt = $conn->prepare($deleteCart);
+            $stmt->execute(['user_id' => $user_id]);
 
             $conn->commit();
 
@@ -124,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                 error_log("Lỗi gửi email: " . $mail->ErrorInfo);
             }
 
+            // ✅ Xóa session giỏ hàng (tránh hiển thị lại)
             unset($_SESSION['cart']);
             header("Location: ../Page/Home.php");
             exit;

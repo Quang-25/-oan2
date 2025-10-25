@@ -1,10 +1,9 @@
 <?php
 include __DIR__ . "/../config/db.php";
-session_start();
+
 // 1. Lấy ID sản phẩm từ URL và kiểm tra
 $product_id = $_GET['id'] ?? null;
 $product = null;
-
 
 if ($product_id) {
     try {
@@ -36,7 +35,10 @@ if (!$product) {
 // Gọi Header
 include(__DIR__ . "/../include/Header.php");
 ?>
-
+    <div class="detail-header">
+    <h2>Chi Tiết Sản Phẩm</h2>
+    <div>Trang chủ / <span>Chi Tiết Sản Phẩm</span></div>
+</div>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -48,6 +50,23 @@ include(__DIR__ . "/../include/Header.php");
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/style.css"> 
     <style>
+        .detail-header {
+    background-color: #e6e6e6;
+    padding: 40px 0;
+    text-align: center;
+}
+.detail-header h2 {
+    color: #b30000;
+    font-weight: 700;
+    margin: 0;
+}
+.detail-header div {
+    margin-top: 5px;
+    font-size: 15px;
+}
+.detail-header span {
+    color: #c50000;
+}
         /* CSS tùy chỉnh cho trang chi tiết */
         .product-gallery img {
             cursor: pointer;
@@ -79,7 +98,7 @@ include(__DIR__ . "/../include/Header.php");
         <div class="row">
             <div class="col-lg-6">
                 <div class="main-image-container mb-3 border rounded shadow-sm">
-                    <img id="mainProductImage" src="<?php echo htmlspecialchars($product['images'] ?? $product['image1'] ?? ''); ?>" 
+<img id="mainProductImage" src="<?php echo htmlspecialchars($product['images'] ?? $product['image1'] ?? ''); ?>" 
                          class="img-fluid w-100 main-image p-3" 
                          alt="<?php echo htmlspecialchars($product['products_name']); ?>">
                 </div>
@@ -87,7 +106,7 @@ include(__DIR__ . "/../include/Header.php");
                 <div class="row product-gallery">
                     <?php if (!empty($product['images'])): ?>
                     <div class="col-3">
-<img src="<?php echo htmlspecialchars($product['images']); ?>" 
+    <img src="<?php echo htmlspecialchars($product['images']); ?>" 
                              class="img-fluid rounded thumbnail" 
                              data-src="<?php echo htmlspecialchars($product['images']); ?>" 
                              alt="Thumbnail 1">
@@ -132,17 +151,14 @@ include(__DIR__ . "/../include/Header.php");
                         <span><?php echo number_format($product['totalquantity'] - $product['quantitySold']); ?></span>
                     </p>
                 </div>
-                
-                <p class="mb-4 text-muted">
-                    <?php echo nl2br(htmlspecialchars(substr($product['descs'], 0, 200))) . '...'; ?>
-                </p>
+
 
                 <div class="d-flex align-items-center mb-4">
                     <label class="me-3 fw-bold">Số lượng:</label>
                     <div class="input-group quantity-control me-4" style="width: 130px;">
-                        <button class="btn btn-outline-secondary" type="button" id="btnMinus">-</button>
+<button class="btn btn-outline-secondary" type="button" id="btnMinus">-</button>
                         <input type="number" id="quantityInput" class="form-control" value="1" min="1" max="<?php echo $product['totalquantity'] - $product['quantitySold']; ?>">
-<button class="btn btn-outline-secondary" type="button" id="btnPlus">+</button>
+                    <button class="btn btn-outline-secondary" type="button" id="btnPlus">+</button>
                     </div>
                     <button class="btn btn-danger btn-lg" id="addToCartBtn" data-id="<?php echo $product['id_product']; ?>">
                         <i class="bi bi-cart-plus me-2"></i> Thêm vào giỏ hàng
@@ -196,13 +212,13 @@ include(__DIR__ . "/../include/Header.php");
                 if (currentVal > 1) {
                     quantityInput.value = currentVal - 1;
                 }
-            });
+});
 
             // Đảm bảo giá trị nhập tay không vượt quá giới hạn
             quantityInput.addEventListener('change', () => {
                 let currentVal = parseInt(quantityInput.value);
                 if (isNaN(currentVal) || currentVal < 1) {
-quantityInput.value = 1;
+                    quantityInput.value = 1;
                 } else if (currentVal > maxQuantity) {
                     quantityInput.value = maxQuantity;
                 }
@@ -253,8 +269,7 @@ quantityInput.value = 1;
                                 <button id="goToCart" class="btn btn-danger">Xem giỏ hàng</button>
                             </div>
                         `;
-                        
-                        document.body.appendChild(overlay);
+document.body.appendChild(overlay);
                         document.body.appendChild(popup);
 
                         // Xử lý nút "Tiếp tục mua sắm"

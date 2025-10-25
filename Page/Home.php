@@ -106,7 +106,7 @@ include __DIR__ . "/../config/db.php";
                 <img src="<?php echo htmlspecialchars($row['image1']); ?>"
                   alt="<?php echo htmlspecialchars($row['products_name']); ?>">
                 <div class="product-actions">
-                  <a href="Product.php?id=<?php echo $row['id_product']; ?>"><i class="bi bi-eye"></i></a>
+                 <a href="Productdetail.php?id=<?php echo $row['id_product']; ?>" class="icon-btn"><i class="bi bi-eye"></i></a>
                   <a href="#" class="icon-btn add-to-cart" data-id="<?php echo $row['id_product']; ?>"><i class="bi bi-cart-plus"></i></a>
                   <a href="#"><i class="bi bi-heart"></i></a>
                   <a href="#"><i class="bi bi-arrow-repeat"></i></a>

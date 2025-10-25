@@ -2,7 +2,9 @@
 session_start();
 include("../config/db.php");
 
-// ===== Thêm sản phẩm vào giỏ hàng =====
+// ===============================
+// 🛒 THÊM SẢN PHẨM VÀO GIỎ HÀNG
+// ===============================
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
     $sql = "SELECT * FROM products WHERE id_product = :id";
@@ -13,9 +15,10 @@ if (isset($_GET['id'])) {
     if ($product) {
         if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
 
-        // ✅ Ưu tiên chọn ảnh chính xác (images → image1 → image2)
+        // ✅ Ưu tiên chọn ảnh hiển thị
         $imagePath = $product['images'] ?: ($product['image1'] ?: ($product['image2'] ?: '../images/no-image.jpg'));
 
+        // === Lưu trong session ===
         if (isset($_SESSION['cart'][$id])) {
             $_SESSION['cart'][$id]['quantity'] += 1;
         } else {
@@ -23,38 +26,91 @@ if (isset($_GET['id'])) {
                 'id' => $product['id_product'],
                 'name' => $product['products_name'],
                 'price' => $product['price'],
-                'image' => $imagePath, // 🔥 Dùng key thống nhất "image"
+                'image' => $imagePath,
                 'quantity' => 1
             ];
         }
+
+        // === Lưu tạm vào bảng cart (nếu đã đăng nhập) ===
+        if (isset($_SESSION['user_id'])) {
+            $user_id = $_SESSION['user_id'];
+            $stmtCheck = $conn->prepare("SELECT * FROM cart WHERE user_id = :uid AND product_id = :pid");
+            $stmtCheck->execute(['uid' => $user_id, 'pid' => $id]);
+            $cartItem = $stmtCheck->fetch(PDO::FETCH_ASSOC);
+
+            if ($cartItem) {
+                $stmtUpdate = $conn->prepare("UPDATE cart 
+                    SET quantity = quantity + 1, subtotal = price * (quantity + 1)
+                    WHERE user_id = :uid AND product_id = :pid");
+                $stmtUpdate->execute(['uid' => $user_id, 'pid' => $id]);
+            } else {
+                $stmtInsert = $conn->prepare("INSERT INTO cart (user_id, product_id, quantity, price, subtotal, image)
+                    VALUES (:uid, :pid, 1, :price, :subtotal, :image)");
+                $stmtInsert->execute([
+                    'uid' => $user_id,
+                    'pid' => $id,
+                    'price' => $product['price'],
+                    'subtotal' => $product['price'],
+                    'image' => $imagePath
+                ]);
+            }
+        }
+
         $_SESSION['message'] = "✅ Đã thêm sản phẩm <b>{$product['products_name']}</b> vào giỏ hàng!";
     }
     header("Location: Cart.php");
     exit();
 }
 
-// ===== Xóa sản phẩm =====
+// ===============================
+// ❌ XOÁ SẢN PHẨM
+// ===============================
 if (isset($_GET['remove'])) {
     $remove_id = intval($_GET['remove']);
     if (isset($_SESSION['cart'][$remove_id])) {
         unset($_SESSION['cart'][$remove_id]);
         $_SESSION['message'] = "✅ Đã xóa sản phẩm khỏi giỏ hàng!";
+
+        // Xóa trong bảng cart nếu có user đăng nhập
+        if (isset($_SESSION['user_id'])) {
+            $stmtDel = $conn->prepare("DELETE FROM cart WHERE user_id = :uid AND product_id = :pid");
+            $stmtDel->execute(['uid' => $_SESSION['user_id'], 'pid' => $remove_id]);
+        }
     }
     header("Location: Cart.php");
     exit();
 }
 
-// ===== Cập nhật số lượng =====
+// ===============================
+// 🔁 CẬP NHẬT SỐ LƯỢNG (AJAX)
+// ===============================
 if (isset($_POST['action']) && $_POST['action'] === 'update_qty') {
     $id = intval($_POST['id']);
-    $qty = intval($_POST['qty']);
+    $qty = max(1, intval($_POST['qty']));
+
     if (isset($_SESSION['cart'][$id])) {
-        $_SESSION['cart'][$id]['quantity'] = max(1, $qty);
-        $subtotal = $_SESSION['cart'][$id]['price'] * $_SESSION['cart'][$id]['quantity'];
+        $_SESSION['cart'][$id]['quantity'] = $qty;
+        $subtotal = $_SESSION['cart'][$id]['price'] * $qty;
+
+        // Cập nhật trong DB nếu có user đăng nhập
+        if (isset($_SESSION['user_id'])) {
+            $stmtUpd = $conn->prepare("UPDATE cart 
+                SET quantity = :qty, subtotal = :subtotal 
+                WHERE user_id = :uid AND product_id = :pid");
+            $stmtUpd->execute([
+                'qty' => $qty,
+                'subtotal' => $subtotal,
+                'uid' => $_SESSION['user_id'],
+                'pid' => $id
+            ]);
+        }
+
+        // Tính tổng
         $total = 0;
         foreach ($_SESSION['cart'] as $item) {
             $total += $item['price'] * $item['quantity'];
         }
+
         echo json_encode([
             'subtotal' => number_format($subtotal, 0, ',', '.') . ' đ',
             'total' => number_format($total, 0, ',', '.') . ' đ'
@@ -63,6 +119,32 @@ if (isset($_POST['action']) && $_POST['action'] === 'update_qty') {
     exit;
 }
 
+// ===============================
+// 🔄 ĐỒNG BỘ LẠI GIỎ HÀNG TỪ DATABASE (khi login)
+// ===============================
+if (isset($_SESSION['user_id']) && (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0)) {
+    $stmt = $conn->prepare("SELECT c.*, p.products_name 
+                            FROM cart c 
+                            JOIN products p ON c.product_id = p.id_product
+                            WHERE c.user_id = :uid");
+    $stmt->execute(['uid' => $_SESSION['user_id']]);
+    $cartItems = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    $_SESSION['cart'] = [];
+    foreach ($cartItems as $item) {
+        $_SESSION['cart'][$item['product_id']] = [
+            'id' => $item['product_id'],
+            'name' => $item['products_name'],
+            'price' => $item['price'],
+            'quantity' => $item['quantity'],
+            'image' => $item['image']
+        ];
+    }
+}
+
+// ===============================
+// 💰 TÍNH TỔNG TIỀN
+// ===============================
 $total = 0;
 ?>
 
