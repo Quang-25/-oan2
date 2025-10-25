@@ -12,6 +12,7 @@ include __DIR__ . "/../Page.backend/payment.login.php";
     <link rel="stylesheet" href="../css/payment.css">
 </head>
 <body>
+ <?php include(__DIR__ . "/../include/Header.php"); ?>
 <div class="container my-5">
     <div class="pm-header mb-4">
         <h2>THANH TOÁN</h2>
@@ -118,5 +119,6 @@ include __DIR__ . "/../Page.backend/payment.login.php";
         </div>
     </form>
 </div>
+<?php include(__DIR__ . "/../include/Footer.php"); ?>
 </body>
 </html>
