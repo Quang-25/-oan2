@@ -5,9 +5,12 @@ include("../config/db.php");
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
-$success = ''; 
+$success = '';
 $errors = [];
 
+// ==========================================
+// ⚠️ KIỂM TRA ĐĂNG NHẬP
+// ==========================================
 if (!isset($_SESSION['ID_user'])) {
     header("Location: ../Page/login.php");
     exit;
@@ -16,6 +19,9 @@ if (!isset($_SESSION['ID_user'])) {
 $user_id = $_SESSION['ID_user'];
 $cartItems = $_SESSION['cart'] ?? [];
 
+// ==========================================
+// 🧠 LẤY THÔNG TIN NGƯỜI DÙNG
+// ==========================================
 $sqlusers = "SELECT Name, Email, Address, Phone FROM users WHERE ID_user = :id_user";
 $stmt = $conn->prepare($sqlusers);
 $stmt->execute(['id_user' => $user_id]);
@@ -29,7 +35,11 @@ $formData = [
     'note'     => ''
 ];
 
+// ==========================================
+// 💳 XỬ LÝ THANH TOÁN
+// ==========================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
+
     $formData = [
         'fullname' => trim($_POST['fullname'] ?? ''),
         'email'    => trim($_POST['email'] ?? ''),
@@ -38,13 +48,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
         'note'     => trim($_POST['note'] ?? '')
     ];
 
+    // Kiểm tra lỗi
     if (empty($cartItems)) {
         $errors['cart'] = "🛒 Giỏ hàng của bạn đang trống!";
     }
 
-    if (!empty($formData['email']) && !filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
+    if (empty($formData['email'])) {
+        $errors['email'] = "⚠️ Vui lòng nhập email!";
+    } elseif (!filter_var($formData['email'], FILTER_VALIDATE_EMAIL)) {
         $errors['email'] = "⚠️ Email không hợp lệ!";
     }
+
 
     $phonePattern = "/^(0|\+84)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-5]|9[0-9])[0-9]{7}$/";
     if (empty($formData['phone'])) {
@@ -57,18 +71,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
         $errors['address'] = "⚠️ Vui lòng nhập địa chỉ nhận hàng!";
     }
 
+    // ==========================================
+    // ✅ NẾU KHÔNG CÓ LỖI → XỬ LÝ LƯU ĐƠN HÀNG
+    // ==========================================
     if (empty($errors)) {
         try {
             $conn->beginTransaction();
+
             $order_date = date('Y-m-d H:i:s');
             $payment_method = $_POST['payment_method'] ?? 'COD';
 
             foreach ($cartItems as $item) {
                 $product_id = $item['id'] ?? $item['id_product'];
-                $quantity = $item['quantity'];
-                $totalamount = $item['price'] * $quantity;
+                $quantity = intval($item['quantity']);
+                $totalamount = intval($item['price']) * $quantity;
 
-                // ✅ Lưu đơn hàng
+                // 🔹 Lưu đơn hàng vào bảng orders
                 $sql = "INSERT INTO orders (quantity, totalamount, User_ID, Product_ID, order_date, payment_method)
                         VALUES (:quantity, :totalamount, :user_id, :product_id, :order_date, :payment_method)";
                 $stmt = $conn->prepare($sql);
@@ -81,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                     ':payment_method' => $payment_method
                 ]);
 
-                // 🔹 Cập nhật tồn kho
+                // 🔹 Cập nhật tồn kho sản phẩm
                 $updateSql = "UPDATE products 
                               SET totalquantity = totalquantity - :qty, 
                                   quantitySold = quantitySold + :qty 
@@ -94,13 +112,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
             }
 
             // ✅ Sau khi lưu đơn hàng → xóa giỏ hàng (user_carts)
-            $deleteCart = "DELETE FROM user_carts WHERE user_id = :user_id";
-            $stmt = $conn->prepare($deleteCart);
-            $stmt->execute(['user_id' => $user_id]);
+            $deleteCart = "DELETE FROM user_carts WHERE User_ID = :user_id";
+            $stmtDel = $conn->prepare($deleteCart);
+            $stmtDel->execute(['user_id' => $user_id]);
 
             $conn->commit();
 
-            // ✅ Gửi email xác nhận
+            // ✅ Gửi email xác nhận đơn hàng
             require '../vendor/autoload.php';
             $mail = new PHPMailer(true);
             try {
@@ -111,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                 $mail->Password   = 'higt jgrf aavo qnhg';
                 $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
                 $mail->Port       = 465;
-                $mail->CharSet = 'UTF-8';
+                $mail->CharSet    = 'UTF-8';
 
                 $mail->setFrom('Cohoi2512@gmail.com', 'Giỏ Hàng Tết Việt');
                 $mail->addAddress($formData['email'], $formData['fullname']);
@@ -129,14 +147,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                 error_log("Lỗi gửi email: " . $mail->ErrorInfo);
             }
 
-            // ✅ Xóa session giỏ hàng (tránh hiển thị lại)
+            // ✅ Xóa session giỏ hàng
             unset($_SESSION['cart']);
-            header("Location: ../Page/Home.php");
-            exit;
 
+            header("Location: ../Page/Home.php?success=1");
+            exit;
         } catch (Exception $e) {
             $conn->rollBack();
-            echo "Lỗi khi thanh toán: " . $e->getMessage();
+            echo "❌ Lỗi khi thanh toán: " . $e->getMessage();
         }
     }
 }

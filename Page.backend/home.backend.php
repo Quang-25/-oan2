@@ -12,7 +12,7 @@ $User_ID = $_SESSION['ID_user'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['action'] === 'orderNow') {
     $product_id = intval($_POST['product_id']);
-    $quantity_to_add = intval($_POST['quantity'] ?? 1); 
+    $quantity_to_add = intval($_POST['quantity'] ?? 1);
 
     if ($quantity_to_add <= 0) {
         echo json_encode(['success' => false, 'message' => '❌ Số lượng không hợp lệ!']);
@@ -58,20 +58,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     // ==============================
     // 💾 PHẦN 2: Lưu vào DATABASE (bảng user_carts)
     // ==============================
-    // Kiểm tra xem sản phẩm này đã có trong giỏ của user chưa
-    $check = $conn->prepare("SELECT * FROM user_carts WHERE user_id = :uid AND product_id = :pid");
+    // ⚙️ Kiểm tra xem sản phẩm này đã có trong giỏ của user chưa
+    $check = $conn->prepare("SELECT * FROM user_carts WHERE User_ID = :uid AND Product_ID = :pid");
     $check->execute(['uid' => $User_ID, 'pid' => $product_id]);
     $existing = $check->fetch(PDO::FETCH_ASSOC);
 
+    // Tính tổng tiền của sản phẩm này
+    $price = $product['price'];
+    $totalToAdd = $price * $quantity_to_add;
+
     if ($existing) {
-        // Nếu đã có → cập nhật số lượng
+        // Nếu đã có → cập nhật số lượng và tổng tiền
         $newQty = $existing['quantity'] + $quantity_to_add;
-        $update = $conn->prepare("UPDATE user_carts SET quantity = :qty WHERE user_id = :uid AND product_id = :pid");
-        $update->execute(['qty' => $newQty, 'uid' => $User_ID, 'pid' => $product_id]);
+        $newTotal = $existing['totalamount'] + $totalToAdd;
+
+        $update = $conn->prepare("
+            UPDATE user_carts 
+            SET quantity = :qty, totalamount = :total 
+            WHERE User_ID = :uid AND Product_ID = :pid
+        ");
+        $update->execute([
+            'qty'   => $newQty,
+            'total' => $newTotal,
+            'uid'   => $User_ID,
+            'pid'   => $product_id
+        ]);
     } else {
         // Nếu chưa có → thêm mới
-        $insert = $conn->prepare("INSERT INTO user_carts (user_id, product_id, quantity) VALUES (:uid, :pid, :qty)");
-        $insert->execute(['uid' => $User_ID, 'pid' => $product_id, 'qty' => $quantity_to_add]);
+        $insert = $conn->prepare("
+            INSERT INTO user_carts (quantity, totalamount, User_ID, Product_ID, order_date)
+            VALUES (:qty, :total, :uid, :pid, NOW())
+        ");
+        $insert->execute([
+            'qty'   => $quantity_to_add,
+            'total' => $totalToAdd,
+            'uid'   => $User_ID,
+            'pid'   => $product_id
+        ]);
     }
 
     // ✅ Đếm số loại sản phẩm trong session

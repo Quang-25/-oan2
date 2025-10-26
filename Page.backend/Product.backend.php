@@ -151,4 +151,3 @@ switch ($sort) {
 $stmt = $conn->prepare($sql);
 $stmt->execute($params);
 $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-?>
