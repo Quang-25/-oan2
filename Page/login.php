@@ -19,45 +19,52 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
 
             if ($user && password_verify($password, $user["Password"])) {
-                // ✅ Tạo session người dùng
-                $_SESSION["ID_user"] = $user["ID_user"];
-                $_SESSION["username"] = $user["Username"];
-                $_SESSION["name"] = $user["Name"];
-                $_SESSION["roles"] = $user["roles"];
 
-                // ✅ Khôi phục giỏ hàng từ bảng user_cart
-                $_SESSION['cart'] = [];
-                $cartQuery = $conn->prepare("
-                    SELECT uc.product_id, uc.quantity, 
-                           p.products_name, p.price, p.images, p.image1, p.image2
-                    FROM user_carts uc
-                    JOIN products p ON uc.product_id = p.id_product
-                    WHERE uc.user_id = :uid
-                ");
-                $cartQuery->execute(['uid' => $_SESSION['ID_user']]);
-                while ($row = $cartQuery->fetch(PDO::FETCH_ASSOC)) {
-                    $img = $row['images'] ?: ($row['image1'] ?: ($row['image2'] ?: '../images/no-image.jpg'));
-                    $_SESSION['cart'][$row['product_id']] = [
-                        'id'       => $row['product_id'],
-                        'name'     => $row['products_name'],
-                        'price'    => $row['price'],
-                        'image'    => $img,
-                        'quantity' => $row['quantity']
-                    ];
-                }
+                // 🚫 Kiểm tra nếu là admin thì không cho đăng nhập ở đây
+                if ($user["roles"] === "admin" || $user["roles"] == 1) {
+                    $msg = "❌ Tài khoản admin không thể đăng nhập vào khu vực người dùng!";
+                } else {
+                    // ✅ Tạo session người dùng
+                    $_SESSION["ID_user"] = $user["ID_user"];
+                    $_SESSION["username"] = $user["Username"];
+                    $_SESSION["name"] = $user["Name"];
+                    $_SESSION["roles"] = $user["roles"];
 
-                // ✅ Chuyển sang trang home.php
-                header("Location: home.php");
-                exit();
+                    // ✅ Khôi phục giỏ hàng từ bảng user_cart
+                    $_SESSION['cart'] = [];
+                    $cartQuery = $conn->prepare("
+                        SELECT uc.product_id, uc.quantity, 
+                               p.products_name, p.price, p.images, p.image1, p.image2
+                        FROM user_carts uc
+                        JOIN products p ON uc.product_id = p.id_product
+                        WHERE uc.user_id = :uid
+                    ");
+                    $cartQuery->execute(['uid' => $_SESSION['ID_user']]);
+                    while ($row = $cartQuery->fetch(PDO::FETCH_ASSOC)) {
+                        $img = $row['images'] ?: ($row['image1'] ?: ($row['image2'] ?: '../images/no-image.jpg'));
+                        $_SESSION['cart'][$row['product_id']] = [
+                            'id'       => $row['product_id'],
+                            'name'     => $row['products_name'],
+                            'price'    => $row['price'],
+                            'image'    => $img,
+                            'quantity' => $row['quantity']
+                        ];
+                    }
+
+                    // ✅ Chuyển sang trang home.php
+                    header("Location: home.php");
+                    exit();
+                } // <-- đóng if roles
             } else {
                 $msg = "❌ Sai tên đăng nhập hoặc mật khẩu!";
-            }
+            } // <-- đóng if kiểm tra user/password
         } catch (PDOException $e) {
             $msg = "Lỗi truy vấn CSDL: " . $e->getMessage();
         }
     }
 }
 ?>
+
 
 
 <!DOCTYPE html>
