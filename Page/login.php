@@ -20,7 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
             if ($user && password_verify($password, $user["Password"])) {
 
-                // 🚫 Kiểm tra nếu là admin thì không cho đăng nhập ở đây
+            
                 if ($user["roles"] === "admin" || $user["roles"] == 1) {
                     $msg = "❌ Tài khoản admin không thể đăng nhập vào khu vực người dùng!";
                 } else {
@@ -51,13 +51,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         ];
                     }
 
-                    // ✅ Chuyển sang trang home.php
                     header("Location: home.php");
                     exit();
-                } // <-- đóng if roles
+                } 
             } else {
                 $msg = "❌ Sai tên đăng nhập hoặc mật khẩu!";
-            } // <-- đóng if kiểm tra user/password
+            } 
         } catch (PDOException $e) {
             $msg = "Lỗi truy vấn CSDL: " . $e->getMessage();
         }
