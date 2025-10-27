@@ -40,7 +40,7 @@ if (session_status() === PHP_SESSION_NONE) {
             <a href="../Page/register.php" class="top-link me-3">Đăng ký</a>
         <?php endif; ?>
         <a href="#" class="top-link me-3">So sánh</a>
-        <a href="#" class="top-link me-3">Yêu thích</a>
+        <a href="../Page/Profile.php" class="top-link me-3">Thông tin cá nhân </a>
         <img src="https://cf.shopee.vn/file/1b135b8d27f4fa192b801d2e576cbb67" alt="VN" class="me-2 rounded" >
         <img src="https://media.viu.edu.vn/Media/2_TSVIU/FolderFunc/202203/Images/logo-20220317084549-e.png" alt="Viu" class="rounded" style="height:20px;">
     </div>
