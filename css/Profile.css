@@ -1,0 +1,62 @@
+
+.wrapper {
+   display: flex;
+   width: 100%;
+   margin: 0 auto;
+   background: white;
+   min-height: 80vh; 
+  
+}
+.sidebar {
+   width: 100px;
+   min-width: 184px;
+   background: #d32f2f;
+   color: white;
+   padding: 25px 0;
+}
+.sidebar h3 {
+   text-align: center;
+   font-weight: 700;
+   margin-bottom: 30px;
+}
+.sidebar a {
+   display: block;
+   color: white;
+   text-decoration: none;
+   padding: 12px 25px;
+   font-weight: 500;
+   transition: background 0.2s;
+}
+
+.content {
+   flex: 1;
+   padding: 30px;
+}
+.h2 {
+   color: #b91c1c;
+   font-weight: 700;
+   margin-bottom: 20px;
+   Text-align: center;
+}
+.msg {
+   color: #b91c1c;
+   font-weight: 500;
+   animation: fadeOut 2s ease-in 3s forwards;
+}
+@keyframes fadeOut {
+   to { opacity: 0; visibility: hidden; }
+}
+.table th {
+   background: #dc2626;
+   color: white;
+}
+.table td {
+   vertical-align: middle;
+}
+.btn-danger {
+   background: #b91c1c;
+   border: none;
+}
+.btn-danger:hover {
+   background: #dc2626;
+}
