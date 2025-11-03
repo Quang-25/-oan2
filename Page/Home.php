@@ -276,7 +276,7 @@ include __DIR__ . "/../config/db.php";
         body: new URLSearchParams({
           action: 'orderNow',
           product_id: productId
-        })
+       })
       })
       .then(res => res.json())
       .then(data => {

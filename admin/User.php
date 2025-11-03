@@ -66,7 +66,7 @@ if ($action === 'delete' && $user_id) {
             // Bật lại kiểm tra khóa ngoại
             $conn->exec("SET FOREIGN_KEY_CHECKS=1");
             
-            $_SESSION['success_msg'] = "Đã xóa người dùng thành công."; // Sửa lại thông báo
+            $_SESSION['success_msg'] = "Đã xóa người dùng thành công.";
 
         } catch (PDOException $e) {
             $conn->exec("SET FOREIGN_KEY_CHECKS=1");
@@ -88,7 +88,7 @@ if ($action === 'edit' && $_SERVER["REQUEST_METHOD"] === "POST" && $user_id) {
 
     // --- CẬP NHẬT VALIDATION ---
     if (empty($name) || empty($email) || empty($phone)) {
-        $error_msg = "Họ tên, Email và SĐT không được để trống.";
+$error_msg = "Họ tên, Email và SĐT không được để trống.";
     } else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $error_msg = "❌ Định dạng Email không hợp lệ. (ví dụ: example@gmail.com)";
     } else if (!preg_match('/^0\d{9}$/', $phone)) {
@@ -123,7 +123,8 @@ $user_to_edit = null; // Cho action 'edit'
 
 if ($action === 'list') {
     try {
-        $sql = "SELECT ID_user, Username, Name, Email, Phone, roles FROM users";
+        // *** THÊM LẠI CỘT: Thêm 'Password' vào SELECT ***
+        $sql = "SELECT ID_user, Username, Name, Email, Phone, Password, roles FROM users";
         $params = [];
         if (!empty($search_term)) {
             $sql .= " WHERE (Username LIKE ? OR Name LIKE ? OR Email LIKE ? OR Phone LIKE ?)";
@@ -163,7 +164,7 @@ if ($action === 'edit' && $user_id) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
-        <?php 
+<?php 
         if ($action === 'edit') echo 'Sửa Người Dùng';
         else echo 'Quản Lý Người Dùng';
         ?>
@@ -171,8 +172,6 @@ if ($action === 'edit' && $user_id) {
     
     <style>
         /* (CSS không đổi) */
-       
-        .container { max-width: 1200px; margin: 0 auto; background-color: #fff; padding: 20px 30px; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); }
         h1 { color: #D90429; text-align: center; border-bottom: 2px solid #D90429; padding-bottom: 10px; }
         .message { padding: 10px; border-radius: 5px; text-align: center; margin-bottom: 15px; font-weight: bold; }
         .success { color: green; background: #e0ffe0; border: 1px solid green; }
@@ -186,6 +185,19 @@ if ($action === 'edit' && $user_id) {
         .action-links a:last-child { margin-right: 0; }
         .action-edit { background-color: #007bff; }
         .action-delete { background-color: #D90429; }
+        
+        /* *** THÊM LẠI CSS: Thêm lại .hashed-password *** */
+        .hashed-password {
+            max-width: 200px;
+            word-break: break-all;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+            color: #555;
+            background: #eee;
+            padding: 5px;
+            border-radius: 4px;
+        }
+
         .form-container { max-width: 600px; margin: 0 auto; }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
@@ -197,7 +209,7 @@ if ($action === 'edit' && $user_id) {
         .button-group a { display: inline-block; margin-right: 10px; color: #555; text-decoration: none; }
         .search-form { margin: 15px 0; display: flex; gap: 10px; }
         .search-form input[type="text"] { flex-grow: 1; padding: 10px; border: 1px solid #ccc; border-radius: 5px; }
-        .search-form button { background-color: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
+.search-form button { background-color: #007bff; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; }
         .search-form button:hover { background-color: #0056b3; }
         .search-form .clear-search { background-color: #6c757d; color: white; padding: 10px 15px; text-decoration: none; border-radius: 5px; display: flex; align-items: center; }
         .search-form .clear-search:hover { background-color: #5a6268; }
@@ -232,7 +244,7 @@ if ($action === 'edit' && $user_id) {
                         <label>Tên đăng nhập</label>
                         <input type="text" value="<?php echo htmlspecialchars($user_to_edit['Username']); ?>" disabled>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="name">Họ và Tên (*)</label>
                         <input type="text" id="name" name="name" 
@@ -255,7 +267,7 @@ if ($action === 'edit' && $user_id) {
                         <label for="roles">Quyền (Roles)</label>
                         <select id="roles" name="roles">
                             <option value="user" <?php if(($_POST['roles'] ?? $user_to_edit['roles']) == 'user') echo 'selected'; ?>>User</option>
-                            <option value="admin" <?php if(($_POST['roles'] ?? $user_to_edit['roles']) == 'admin') echo 'selected'; ?>>Admin</option>
+<option value="admin" <?php if(($_POST['roles'] ?? $user_to_edit['roles']) == 'admin') echo 'selected'; ?>>Admin</option>
                         </select>
                     </div>
 
@@ -296,6 +308,7 @@ if ($action === 'edit' && $user_id) {
                         <th>Họ và Tên</th>
                         <th>Email</th>
                         <th>Số điện thoại</th>
+                        <th>Mật khẩu</th> 
                         <th>Quyền (Roles)</th>
                         <th>Hành động</th>
                     </tr>
@@ -303,7 +316,7 @@ if ($action === 'edit' && $user_id) {
                 <tbody>
                     <?php if (empty($users)): ?>
                         <tr>
-                            <td colspan="7" style="text-align: center;">
+                            <td colspan="8" style="text-align: center;">
                                 <?php if (!empty($search_term)): ?>
                                     Không tìm thấy người dùng nào khớp với "<?php echo htmlspecialchars($search_term); ?>".
                                 <?php else: ?>
@@ -317,8 +330,15 @@ if ($action === 'edit' && $user_id) {
                                 <td><?php echo htmlspecialchars($user['ID_user']); ?></td>
                                 <td><?php echo htmlspecialchars($user['Username']); ?></td>
                                 <td><?php echo htmlspecialchars($user['Name']); ?></td>
-                                <td><?php echo htmlspecialchars($user['Email']); ?></td>
+<td><?php echo htmlspecialchars($user['Email']); ?></td>
                                 <td><?php echo htmlspecialchars($user['Phone']); ?></td>
+                                
+                                <td>
+                                    <div class="hashed-password">
+                                        <?php echo htmlspecialchars($user['Password']); ?>
+                                    </div>
+                                </td>
+                                
                                 <td><?php echo htmlspecialchars($user['roles']); ?></td>
                                 <td class="action-links">
                                     <?php
@@ -352,23 +372,15 @@ if ($action === 'edit' && $user_id) {
     </div> 
 
     <script>
-        // Lấy phần tử thông báo thành công
         const alertElement = document.getElementById('auto-hide-alert');
-        
-        // Kiểm tra xem nó có tồn tại không
         if (alertElement) {
-            // Đặt thời gian tự động ẩn sau 1000ms (1 giây)
             setTimeout(() => {
-                // Thêm hiệu ứng mờ dần (tùy chọn nhưng đẹp hơn)
                 alertElement.style.transition = 'opacity 0.5s ease';
                 alertElement.style.opacity = '0';
-                
-                // Xóa hẳn phần tử sau khi mờ xong (0.5s)
                 setTimeout(() => {
                     alertElement.style.display = 'none';
-                }, 500); // 500ms = 0.5s
-
-            }, 1000); // 1000ms = 1 giây
+                }, 500);
+            }, 1000); // 1 giây
         }
     </script>
 </body>
