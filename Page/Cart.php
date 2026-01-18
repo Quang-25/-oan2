@@ -2,8 +2,8 @@
 session_start();
 include("../config/db.php");
 
-// ==========================================
-// 🛒 THÊM SẢN PHẨM VÀO GIỎ HÀNG
+
+// THÊM SẢN PHẨM VÀO GIỎ HÀNG
 // ==========================================
 if (isset($_GET['id'])) {
     $id = intval($_GET['id']);
@@ -17,7 +17,7 @@ if (isset($_GET['id'])) {
 
         $imagePath = $product['images'] ?: ($product['image1'] ?: ($product['image2'] ?: '../images/no-image.jpg'));
 
-        // ✅ Cập nhật giỏ hàng trong SESSION
+        // Cập nhật giỏ hàng trong SESSION
         if (isset($_SESSION['cart'][$id])) {
             $_SESSION['cart'][$id]['quantity']++;
         } else {
@@ -30,7 +30,7 @@ if (isset($_GET['id'])) {
             ];
         }
 
-        // ✅ Cập nhật user_carts trong DB (nếu user đã đăng nhập)
+        //  Cập nhật user_carts trong DB (nếu user đã đăng nhập)
         if (isset($_SESSION['ID_user'])) {
             $user_id = $_SESSION['ID_user'];
             $price = $product['price'];
@@ -73,19 +73,19 @@ if (isset($_GET['id'])) {
     exit();
 }
 
-// ==========================================
-// ❌ XÓA SẢN PHẨM KHỎI GIỎ
+
+// XÓA SẢN PHẨM KHỎI GIỎ
 // ==========================================
 if (isset($_GET['remove'])) {
     $remove_id = intval($_GET['remove']);
 
-    // ✅ Xóa trong SESSION
+    //  Xóa trong SESSION
     if (isset($_SESSION['cart'][$remove_id])) {
         unset($_SESSION['cart'][$remove_id]);
         $_SESSION['message'] = "✅ Đã xóa sản phẩm khỏi giỏ hàng!";
     }
 
-    // ✅ Xóa trong DB (nếu có user đăng nhập)
+    //  Xóa trong DB (nếu có user đăng nhập)
     if (isset($_SESSION['ID_user'])) {
         $stmtDel = $conn->prepare("
             DELETE FROM user_carts 
@@ -102,7 +102,7 @@ if (isset($_GET['remove'])) {
 }
 
 // ==========================================
-// 🔁 CẬP NHẬT SỐ LƯỢNG (AJAX)
+//  CẬP NHẬT SỐ LƯỢNG (AJAX)
 // ==========================================
 if (isset($_POST['action']) && $_POST['action'] === 'update_qty') {
     $id = intval($_POST['id']);
@@ -112,7 +112,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'update_qty') {
         $_SESSION['cart'][$id]['quantity'] = $qty;
         $subtotal = $_SESSION['cart'][$id]['price'] * $qty;
 
-        // ✅ Cập nhật DB nếu có user đăng nhập
+        // Cập nhật DB nếu có user đăng nhập
         if (isset($_SESSION['ID_user'])) {
             $user_id = $_SESSION['ID_user'];
             $total = $_SESSION['cart'][$id]['price'] * $qty;
@@ -145,7 +145,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'update_qty') {
 }
 
 // ==========================================
-// 🔄 ĐỒNG BỘ LẠI GIỎ HÀNG SAU KHI LOGIN
+// ĐỒNG BỘ LẠI GIỎ HÀNG SAU KHI LOGIN
 // ==========================================
 if (isset($_SESSION['ID_user']) && (!isset($_SESSION['cart']) || count($_SESSION['cart']) == 0)) {
     $stmt = $conn->prepare("
@@ -286,7 +286,7 @@ $total = 0;
                 $subtotal = $item['price'] * $item['quantity'];
                 $total += $subtotal;
 
-                // ✅ Chọn ảnh hiển thị đúng (images → image1 → image2)
+                // Chọn ảnh hiển thị đúng (images → image1 → image2)
                 $imgPath = $item['image'] ?? '../images/no-image.jpg';
                 if (empty(trim($imgPath))) $imgPath = "../images/no-image.jpg";
             ?>

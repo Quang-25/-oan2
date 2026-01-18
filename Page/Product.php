@@ -117,7 +117,7 @@ document.querySelectorAll('.add-to-cart').forEach(btn => {
     .then(data => {
       if (data.success) {
 
-        // ✅ Nếu backend có trả cart_count -> cập nhật số giỏ hàng
+        // Nếu backend có trả cart_count -> cập nhật số giỏ hàng
         if (data.cart_count !== undefined) {
           document.querySelectorAll('#cart-count').forEach(el => {
             el.textContent = data.cart_count;
@@ -125,7 +125,7 @@ document.querySelectorAll('.add-to-cart').forEach(btn => {
           });
         }
 
-        // 🟢 Tạo popup thông báo
+        // Tạo popup thông báo
         const overlay = document.createElement('div');
         overlay.className = 'position-fixed top-0 start-0 w-100 h-100 bg-dark opacity-50';
         overlay.style.zIndex = '1050';
@@ -147,13 +147,13 @@ document.querySelectorAll('.add-to-cart').forEach(btn => {
         document.body.appendChild(overlay);
         document.body.appendChild(popup);
 
-        // 👉 Xử lý nút "Tiếp tục mua sắm"
+        //  Xử lý nút "Tiếp tục mua sắm"
         popup.querySelector('#continueShopping').addEventListener('click', () => {
           popup.remove();
           overlay.remove();
         });
 
-        // 👉 Xử lý nút "Xem giỏ hàng"
+        //  Xử lý nút "Xem giỏ hàng"
         popup.querySelector('#goToCart').addEventListener('click', () => {
           window.location.href = '../Page/Cart.php';
         });

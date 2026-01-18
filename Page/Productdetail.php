@@ -1,13 +1,13 @@
 <?php
 include __DIR__ . "/../config/db.php";
 
-// 1. Lấy ID sản phẩm từ URL và kiểm tra
+//  Lấy ID sản phẩm từ URL và kiểm tra
 $product_id = $_GET['id'] ?? null;
 $product = null;
 
 if ($product_id) {
     try {
-        // 2. Truy vấn an toàn bằng Prepared Statement
+        //  Truy vấn an toàn bằng Prepared Statement
         $stmt = $conn->prepare("SELECT * FROM products WHERE id_product = :id");
         $stmt->bindParam(':id', $product_id, PDO::PARAM_INT);
         $stmt->execute();
@@ -17,7 +17,7 @@ if ($product_id) {
             // Giá định dạng số
             $product['price'] = (float)$product['price'];
 
-            // 🔹 Xử lý chọn ảnh chính giống Home
+            //  Xử lý chọn ảnh chính giống Home
             $product['imagePath'] = $product['images']
                 ?: ($product['image1']
                     ?: ($product['image2']
@@ -36,7 +36,7 @@ if (!$product) {
 }
 
 // ------------------- MÃ MỚI (Lấy sản phẩm liên quan) -------------------
-// 3. Lấy sản phẩm liên quan (cùng danh mục)
+//  Lấy sản phẩm liên quan (cùng danh mục)
 $related_products = [];
 try {
     // Truy vấn lấy 4 sản phẩm cùng danh mục, trừ sản phẩm hiện tại

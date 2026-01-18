@@ -9,8 +9,8 @@ $success = '';
 $errors = [];
 
 // ==========================================
-// ⚠️ KIỂM TRA ĐĂNG NHẬP
-// ==========================================
+//  KIỂM TRA ĐĂNG NHẬP
+
 if (!isset($_SESSION['ID_user'])) {
     header("Location: ../Page/login.php");
     exit;
@@ -20,7 +20,7 @@ $user_id = $_SESSION['ID_user'];
 $cartItems = $_SESSION['cart'] ?? [];
 
 // ==========================================
-// 🧠 LẤY THÔNG TIN NGƯỜI DÙNG
+//  LẤY THÔNG TIN NGƯỜI DÙNG
 // ==========================================
 $sqlusers = "SELECT Name, Email, Address, Phone FROM users WHERE ID_user = :id_user";
 $stmt = $conn->prepare($sqlusers);
@@ -36,7 +36,7 @@ $formData = [
 ];
 
 // ==========================================
-// 💳 XỬ LÝ THANH TOÁN
+//  XỬ LÝ THANH TOÁN
 // ==========================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
 
@@ -72,7 +72,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
     }
 
     // ==========================================
-    // ✅ NẾU KHÔNG CÓ LỖI → XỬ LÝ LƯU ĐƠN HÀNG
+    //  NẾU KHÔNG CÓ LỖI → XỬ LÝ LƯU ĐƠN HÀNG
     // ==========================================
     if (empty($errors)) {
         try {
@@ -86,7 +86,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                 $quantity = intval($item['quantity']);
                 $totalamount = intval($item['price']) * $quantity;
 
-                // 🔹 Lưu đơn hàng vào bảng orders
+                //  Lưu đơn hàng vào bảng orders
                 $sql = "INSERT INTO orders (quantity, totalamount, User_ID, Product_ID, order_date, payment_method)
                         VALUES (:quantity, :totalamount, :user_id, :product_id, :order_date, :payment_method)";
                 $stmt = $conn->prepare($sql);
@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                     ':payment_method' => $payment_method
                 ]);
 
-                // 🔹 Cập nhật tồn kho sản phẩm
+                // Cập nhật tồn kho sản phẩm
                 $updateSql = "UPDATE products 
                               SET totalquantity = totalquantity - :qty, 
                                   quantitySold = quantitySold + :qty 
@@ -111,14 +111,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                 ]);
             }
 
-            // ✅ Sau khi lưu đơn hàng → xóa giỏ hàng (user_carts)
+            //  Sau khi lưu đơn hàng → xóa giỏ hàng (user_carts)
             $deleteCart = "DELETE FROM user_carts WHERE User_ID = :user_id";
             $stmtDel = $conn->prepare($deleteCart);
             $stmtDel->execute(['user_id' => $user_id]);
 
             $conn->commit();
 
-            // ✅ Gửi email xác nhận đơn hàng
+            // Gửi email xác nhận đơn hàng
             require '../vendor/autoload.php';
             $mail = new PHPMailer(true);
             try {
@@ -147,7 +147,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                 error_log("Lỗi gửi email: " . $mail->ErrorInfo);
             }
 
-            // ✅ Xóa session giỏ hàng
+            //  Xóa session giỏ hàng
             unset($_SESSION['cart']);
 
             header("Location: ../Page/Home.php?success=1");

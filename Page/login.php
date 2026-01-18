@@ -24,13 +24,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 if ($user["roles"] === "admin" || $user["roles"] == 1) {
                     $msg = "❌ Tài khoản admin không thể đăng nhập vào khu vực người dùng!";
                 } else {
-                    // ✅ Tạo session người dùng
+                    // Tạo session người dùng
                     $_SESSION["ID_user"] = $user["ID_user"];
                     $_SESSION["username"] = $user["Username"];
                     $_SESSION["name"] = $user["Name"];
                     $_SESSION["roles"] = $user["roles"];
 
-                    // ✅ Khôi phục giỏ hàng từ bảng user_cart
+                    //  Khôi phục giỏ hàng từ bảng user_cart
                     $_SESSION['cart'] = [];
                     $cartQuery = $conn->prepare("
                         SELECT uc.product_id, uc.quantity, 
