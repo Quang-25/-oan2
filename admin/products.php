@@ -18,7 +18,6 @@ if (isset($_GET['delete'])) {
   exit;
 }
 // ==== THÊM SẢN PHẨM ====
-// ==== THÊM SẢN PHẨM ====
 if (isset($_POST['action']) && $_POST['action'] === 'add') {
   $name = trim($_POST['products_name']);
   $price = floatval($_POST['price']);
@@ -49,7 +48,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'edit') {
   $quantity = intval($_POST['totalquantity']);
   $quantitySold = intval($_POST['quantitySold']);
   $desc = trim($_POST['desc']);
-  $category =$_POST['category']?? 'Túi quà' ;
+  $category = $_POST['category'] ?? 'Túi quà';
   $status = $_POST['status'] ?? 'Còn hàng';
   $images = $_POST['images'] ?? '';
   $image1 = $_POST['image1'] ?? '';
@@ -58,7 +57,7 @@ if (isset($_POST['action']) && $_POST['action'] === 'edit') {
   $stmt = $conn->prepare("UPDATE products 
         SET products_name=?, price=?, totalquantity=?, quantitySold=?,descs=?,category=?,images=?, image1=?, image2=?, status=? 
         WHERE id_product=?");
-  $stmt->execute([$name, $price, $quantity, $quantitySold, $desc, $category,$images, $image1, $image2, $status, $id]);
+  $stmt->execute([$name, $price, $quantity, $quantitySold, $desc, $category, $images, $image1, $image2, $status, $id]);
   header("Location: index.php?page=products");
   exit;
 }
@@ -90,10 +89,8 @@ function getImageUrl($p)
   return "../images/no-image.jpg";
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -215,7 +212,7 @@ function getImageUrl($p)
     </table>
   </div>
 
-  <!-- Modal thêm -->
+
   <div class="modal fade" id="addModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
       <form method="POST" class="modal-content">
@@ -281,7 +278,7 @@ function getImageUrl($p)
               <label>Số lượng đã bán</label>
               <input type="number" name="quantitySold" id="edit_sold" class="form-control" required>
             </div>
-            
+
             <div class="col-md-4">
               <label>Trạng thái</label>
               <select name="status" id="edit_status" class="form-control" required>
@@ -295,7 +292,7 @@ function getImageUrl($p)
               <label>Mô tả</label>
               <textarea name="desc" id="edit_desc" class="form-control"></textarea>
             </div>
-            
+
             <div class="col-12">
               <label>Loại</label>
               <input type="text" name="category" id="edit_category" class="form-control">
