@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         exit;
     }
 
-    // 🔹 Kiểm tra tồn kho
+    //  Kiểm tra tồn kho
     if ($product['quantitySold'] >= $product['totalquantity']) {
         echo json_encode(['success' => false, 'message' => '❌ Sản phẩm đã hết hàng, không thể thêm vào giỏ!']);
         exit;
@@ -39,7 +39,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
     $imagePath = $product['images'] ?: ($product['image1'] ?: ($product['image2'] ?: '../images/no-image.jpg'));
 
     // ==============================
-    // 🧠 PHẦN 1: Lưu vào SESSION
+    // PHẦN 1: Lưu vào SESSION
     // ==============================
     if (!isset($_SESSION['cart'])) $_SESSION['cart'] = [];
 
@@ -55,10 +55,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         ];
     }
 
-    // ==============================
-    // 💾 PHẦN 2: Lưu vào DATABASE (bảng user_carts)
-    // ==============================
-    // ⚙️ Kiểm tra xem sản phẩm này đã có trong giỏ của user chưa
+    //  Lưu vào DATABASE (bảng user_carts)
+    //Kiểm tra xem sản phẩm này đã có trong giỏ của user chưa
     $check = $conn->prepare("SELECT * FROM user_carts WHERE User_ID = :uid AND Product_ID = :pid");
     $check->execute(['uid' => $User_ID, 'pid' => $product_id]);
     $existing = $check->fetch(PDO::FETCH_ASSOC);
@@ -97,7 +95,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action']) && $_POST['
         ]);
     }
 
-    // ✅ Đếm số loại sản phẩm trong session
+    // Đếm số loại sản phẩm trong session
     $cart_count = count($_SESSION['cart']);
 
     echo json_encode([
