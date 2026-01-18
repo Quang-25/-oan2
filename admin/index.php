@@ -36,6 +36,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'products';
         <nav class="sidebar-nav">
             <a href="?page=products" class="<?= $page == 'products' ? 'active' : '' ?>"><i class="fa-solid fa-box"></i> Sản phẩm</a>
             <a href="?page=User" class="<?= $page == 'User' ? 'active' : '' ?>"><i class="fa-solid fa-users"></i> Người dùng</a>
+            <a href="?page=oders" class="<?= $page == 'oders' ? 'active' : '' ?>"><i class="fa-solid fa-cart-shopping"></i> Đơn hàng</a>
         </nav>
         <div class="sidebar-footer mt-auto">
             <a href="logout.php" class="btn btn-light w-100"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>

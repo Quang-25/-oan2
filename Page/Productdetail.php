@@ -35,6 +35,30 @@ if (!$product) {
     exit();
 }
 
+// ------------------- MÃ MỚI (Lấy sản phẩm liên quan) -------------------
+// 3. Lấy sản phẩm liên quan (cùng danh mục)
+$related_products = [];
+try {
+    // Truy vấn lấy 4 sản phẩm cùng danh mục, trừ sản phẩm hiện tại
+    $stmt_related = $conn->prepare(
+        "SELECT * FROM products 
+         WHERE category = :category AND id_product != :id 
+         LIMIT 4"
+    );
+
+    // Sử dụng thông tin từ sản phẩm chính đã lấy được
+    $stmt_related->bindParam(':category', $product['category']);
+    $stmt_related->bindParam(':id', $product['id_product'], PDO::PARAM_INT);
+
+    $stmt_related->execute();
+    $related_products = $stmt_related->fetchAll(PDO::FETCH_ASSOC);
+} catch (PDOException $e) {
+    error_log("Related products query error: " . $e->getMessage());
+    // Lỗi cũng không sao, chỉ là không hiển thị phần liên quan
+}
+// ------------------- KẾT THÚC MÃ MỚI -------------------
+
+
 // Gọi Header
 include(__DIR__ . "/../include/Header.php");
 ?>
@@ -152,7 +176,6 @@ include(__DIR__ . "/../include/Header.php");
     <div class="container my-5">
         <div class="row">
             <div class="col-lg-6">
-                <!-- Ảnh chính -->
                 <div class="main-image-container mb-3 border rounded shadow-sm">
                     <img id="mainProductImage"
                         src="<?php echo htmlspecialchars($product['imagePath']); ?>"
@@ -160,7 +183,6 @@ include(__DIR__ . "/../include/Header.php");
                         alt="<?php echo htmlspecialchars($product['products_name']); ?>">
                 </div>
 
-                <!-- Bộ sưu tập ảnh nhỏ -->
                 <div class="row product-gallery">
                     <?php if (!empty($product['images'])): ?>
                         <div class="col-3">
@@ -237,8 +259,51 @@ include(__DIR__ . "/../include/Header.php");
                 </div>
             </div>
         </div>
-    </div>
+    </div> <?php if (!empty($related_products)): ?>
+        <div class="container my-5">
+            <h2 class="mb-4" style="color: #b30000; font-weight: 700;">Sản Phẩm Liên Quan</h2>
+            <div class="row">
+                <?php foreach ($related_products as $rel_prod): ?>
+                    <?php
+                    // Tái sử dụng logic chọn ảnh chính
+                    $imagePath = $rel_prod['images']
+                        ?: ($rel_prod['image1']
+                            ?: ($rel_prod['image2']
+                                ?: '../images/no-image.jpg'));
+                    ?>
+                    <div class="col-lg-3 col-md-4 col-sm-6 mb-4">
+                        <div class="card h-100 shadow-sm border-0 rounded-3">
 
+                            <a href="ProductDetail.php?id=<?php echo $rel_prod['id_product']; ?>">
+                                <img src="<?php echo htmlspecialchars($imagePath); ?>"
+                                    class="card-img-top"
+                                    alt="<?php echo htmlspecialchars($rel_prod['products_name']); ?>"
+                                    style="height: 220px; object-fit: contain; padding: 15px;">
+                            </a>
+
+                            <div class="card-body text-center d-flex flex-column">
+                                <h5 class="card-title" style="font-size: 17px; min-height: 48px; overflow: hidden;">
+                                    <a href="ProductDetail.php?id=<?php echo $rel_prod['id_product']; ?>" class="text-decoration-none" style="color: #333;">
+                                        <?php echo htmlspecialchars($rel_prod['products_name']); ?>
+                                    </a>
+                                </h5>
+
+                                <p class="card-text text-danger fw-bold mt-2" style="font-size: 19px;">
+                                    <?php echo number_format($rel_prod['price'], 0, ',', '.'); ?> đ
+                                </p>
+
+                                <div class="mt-auto">
+                                    <a href="ProductDetail.php?id=<?php echo $rel_prod['id_product']; ?>" class="btn btn-sm btn-outline-danger px-3 py-2" style="font-size: 14px;">
+                                        Xem chi tiết
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    <?php endif; ?>
     <?php include(__DIR__ . "/../include/Footer.php"); ?>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
