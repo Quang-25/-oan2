@@ -2,82 +2,193 @@
 if (session_status() === PHP_SESSION_NONE) session_start();
 require_once __DIR__ . "/../config/db.php";
 
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
+
 /* ==== KIỂM TRA ADMIN ==== */
 if (!isset($_SESSION['admin']) || $_SESSION['admin']['roles'] !== 'admin') {
     header("Location: ../login.php");
     exit;
 }
 
-/* ==== XÓA ĐƠN HÀNG ==== */
-if (isset($_GET['delete'])) {
-    $id = (int)$_GET['delete'];
+/* ==== DUYỆT ĐƠN HÀNG ==== */
+if (isset($_GET['approve'])) {
+    $order_id = (int)$_GET['approve'];
+    
     try {
-        $stmt = $conn->prepare("DELETE FROM orders WHERE orders_id = ?");
-        $result = $stmt->execute([$id]);
-        if ($result) {
-            $_SESSION['success'] = "✓ Xóa đơn hàng thành công!";
+        // Lấy thông tin đơn hàng
+        $stmt = $conn->prepare("
+            SELECT o.*, p.totalquantity, u.email, u.username, p.products_name
+            FROM orders o
+            LEFT JOIN products p ON o.Product_ID = p.id_product
+            LEFT JOIN users u ON o.User_ID = u.ID_user
+            WHERE o.orders_id = ?
+        ");
+        $stmt->execute([$order_id]);
+        $order = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        if ($order) {
+            // Kiểm tra tồn kho
+            $current_inventory = (int)$order['totalquantity'];
+            $needed = (int)$order['quantity'];
+            
+            if ($current_inventory < $needed) {
+                $_SESSION['error'] = "✗ Tồn kho không đủ! Chỉ còn " . $current_inventory;
+            } else {
+                // Trừ kho
+                $stmt = $conn->prepare("
+                    UPDATE products 
+                    SET totalquantity = totalquantity - ?,
+                        quantitySold = quantitySold + ?
+                    WHERE id_product = ?
+                ");
+                $stmt->execute([$needed, $needed, $order['Product_ID']]);
+                
+                // Cập nhật status
+                $stmt = $conn->prepare("
+                    UPDATE orders 
+                    SET status = 'approved'
+                    WHERE orders_id = ?
+                ");
+                $stmt->execute([$order_id]);
+                
+                // Gửi email
+                if ($order['email']) {
+                    require_once __DIR__ . "/../vendor/autoload.php";
+                    $mail = new PHPMailer(true);
+                    try {
+                        $mail->isSMTP();
+                        $mail->Host       = 'smtp.gmail.com';
+                        $mail->SMTPAuth   = true;
+                        $mail->Username   = 'Cohoi2512@gmail.com';
+                        $mail->Password   = 'higt jgrf aavo qnhg';
+                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                        $mail->Port       = 465;
+                        $mail->CharSet    = 'UTF-8';
+
+                        $mail->setFrom('Cohoi2512@gmail.com', 'Giỏ Hàng Tết Việt');
+                        $mail->addAddress($order['email'], $order['username']);
+                        $mail->isHTML(true);
+                        $mail->Subject = "Xác nhận thanh toán & duyệt đơn hàng #$order_id - Giỏ Hàng Tết Việt";
+                        $mail->Body = "
+                            <h3>Xin chào {$order['username']}</h3>
+
+                            <p>Chúng tôi đã <strong>xác nhận thanh toán</strong> cho đơn hàng 
+                             của bạn tại <strong>Giỏ Hàng Tết Việt</strong>.</p>
+                            <p>Đơn hàng của bạn đã được duyệt và hiện đang trong quá trình chuẩn bị giao hàng.</p>
+                            <p><strong>Thông tin đơn hàng:</strong></p>
+                            <ul style='list-style: none; padding: 0;'>
+                                <li>📦 <strong>Sản phẩm:</strong> {$order['products_name']}</li>
+                                <li>📊 <strong>Số lượng:</strong> $needed</li>
+                                <li>💰 <strong>Tổng tiền đã thanh toán:</strong> " . number_format($order['totalamount']) . " đ</li>
+                                <li>📅 <strong>Ngày đặt:</strong> " . date('d/m/Y H:i', strtotime($order['order_date'])) . "</li>
+                                <li>💳 <strong>Phương thức thanh toán:</strong> {$order['payment_method']}</li>
+                            </ul>
+
+                            <p>Chúng tôi sẽ sớm liên hệ với bạn khi đơn hàng được bàn giao cho đơn vị vận chuyển.</p>
+
+                            <br>
+                            <p>Trân trọng,<br>
+                            <strong>Đội ngũ Giỏ Hàng Tết Việt</strong></p>
+                        ";
+                        $mail->send();
+                    } catch (Exception $e) {
+                        error_log("Lỗi gửi email duyệt: " . $mail->ErrorInfo);
+                    }
+                }
+                
+                $_SESSION['success'] = "✓ Duyệt đơn hàng thành công! Kho đã được trừ.";
+            }
+        } else {
+            $_SESSION['error'] = "✗ Không tìm thấy đơn hàng!";
         }
     } catch (Exception $e) {
         $_SESSION['error'] = "✗ Lỗi: " . $e->getMessage();
     }
+    
     header("Location: index.php?page=oders");
     exit;
 }
 
-/* ==== SỬA ĐƠN HÀNG ==== */
-if (isset($_POST['action']) && $_POST['action'] === 'edit') {
-    $id       = (int)$_POST['id'];
-    $quantity = (int)$_POST['quantity'];
-    $total    = (float)$_POST['totalamount'];
+/* ==== HUỶ ĐƠN HÀNG ==== */
+if (isset($_GET['reject'])) {
+    $order_id = (int)$_GET['reject'];
+    
+    try {
+        $stmt = $conn->prepare("
+            SELECT o.*, u.email, u.username 
+            FROM orders o
+            LEFT JOIN users u ON o.User_ID = u.ID_user
+            WHERE o.orders_id = ?
+        ");
+        $stmt->execute([$order_id]);
+        $order = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+        // Cập nhật status
+        $stmt = $conn->prepare("
+            UPDATE orders 
+            SET status = 'cancelled'
+            WHERE orders_id = ?
+        ");
+        $stmt->execute([$order_id]);
+        
+        // Gửi email
+        if ($order && $order['email']) {
+            require_once __DIR__ . "/../vendor/autoload.php";
+            $mail = new PHPMailer(true);
+            try {
+                $mail->isSMTP();
+                $mail->Host       = 'smtp.gmail.com';
+                $mail->SMTPAuth   = true;
+                $mail->Username   = 'Cohoi2512@gmail.com';
+                $mail->Password   = 'higt jgrf aavo qnhg';
+                $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                $mail->Port       = 465;
+                $mail->CharSet    = 'UTF-8';
 
-    if ($id > 0 && $quantity > 0 && $total > 0) {
-        try {
-            $stmt = $conn->prepare("
-                UPDATE orders 
-                SET quantity = ?, totalamount = ?
-                WHERE orders_id = ?
-            ");
-            $result = $stmt->execute([$quantity, $total, $id]);
-            if ($result && $stmt->rowCount() > 0) {
-                $_SESSION['success'] = "✓ Cập nhật đơn hàng thành công!";
-            } else {
-                $_SESSION['error'] = "✗ Không tìm thấy đơn hàng!";
+                $mail->setFrom('Cohoi2512@gmail.com', 'Giỏ Hàng Tết Việt');
+                $mail->addAddress($order['email'], $order['username']);
+                $mail->isHTML(true);
+                $mail->Subject = ' Đơn hàng #' . $order_id . ' bị huỷ';
+                $mail->Body = "
+                    <h3>Xin chào {$order['username']}</h3>
+                    <p>Đơn hàng <strong>#$order_id</strong> của bạn đã bị huỷ.</p>
+                    <p>Lý do huỷ có thể do:</p>
+                    <ul>
+                        <li>Sản phẩm hết hàng</li>
+                        <li>Không đủ điều kiện thanh toán</li>
+                        <li>Các vấn đề khác về giao hàng</li>
+                    </ul>
+                    <p>Vui lòng <strong>liên hệ với chúng tôi</strong> để biết thêm chi tiết.</p>
+                    <p>Số điện thoại hỗ trợ: <strong>1900 9477</strong></p>
+                    <br><p>Xin lỗi vì sự bất tiện này!<br>Đội ngũ hỗ trợ khách hàng</p>";
+                $mail->send();
+            } catch (Exception $e) {
+                error_log("Lỗi gửi email huỷ: " . $mail->ErrorInfo);
             }
-        } catch (Exception $e) {
-            $_SESSION['error'] = "✗ Lỗi: " . $e->getMessage();
         }
-    } else {
-        $_SESSION['error'] = "✗ Vui lòng điền đầy đủ thông tin!";
+        
+        $_SESSION['success'] = "✓ Huỷ đơn hàng thành công!";
+    } catch (Exception $e) {
+        $_SESSION['error'] = "✗ Lỗi: " . $e->getMessage();
     }
-
+    
     header("Location: index.php?page=oders");
     exit;
 }
 
-/* ==== THÊM ĐƠN HÀNG ==== */
-if (isset($_POST['action']) && $_POST['action'] === 'add') {
-    $user_id = (int)$_POST['user_id'];
-    $product_id = (int)$_POST['product_id'];
-    $quantity = (int)$_POST['quantity'];
-    $total = (float)$_POST['totalamount'];
-
-    if ($user_id > 0 && $product_id > 0 && $quantity > 0 && $total > 0) {
-        try {
-            $stmt = $conn->prepare("
-                INSERT INTO orders (User_ID, Product_ID, quantity, totalamount, order_date)
-                VALUES (?, ?, ?, ?, NOW())
-            ");
-            $result = $stmt->execute([$user_id, $product_id, $quantity, $total]);
-            if ($result) {
-                $_SESSION['success'] = "✓ Thêm đơn hàng thành công!";
-            }
-        } catch (Exception $e) {
-            $_SESSION['error'] = "✗ Lỗi: " . $e->getMessage();
-        }
-    } else {
-        $_SESSION['error'] = "✗ Vui lòng điền đầy đủ thông tin!";
+/* ==== XÓA ĐƠN HÀNG ==== */
+if (isset($_GET['delete'])) {
+    $order_id = (int)$_GET['delete'];
+    
+    try {
+        $stmt = $conn->prepare("DELETE FROM orders WHERE orders_id = ?");
+        $stmt->execute([$order_id]);
+        $_SESSION['success'] = "✓ Xóa đơn hàng thành công!";
+    } catch (Exception $e) {
+        $_SESSION['error'] = "✗ Lỗi: " . $e->getMessage();
     }
-
+    
     header("Location: index.php?page=oders");
     exit;
 }
@@ -107,7 +218,6 @@ if ($search) {
 
 $orders = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-/* ==== THÔNG BÁO ==== */
 $success = $_SESSION['success'] ?? '';
 $error = $_SESSION['error'] ?? '';
 unset($_SESSION['success'], $_SESSION['error']);
@@ -130,153 +240,101 @@ unset($_SESSION['success'], $_SESSION['error']);
 <?php endif; ?>
 
 <div class="d-flex justify-content-between align-items-center mb-4">
-    <button class="btn" style="background-color: #e11818; color: white; padding: 10px 20px; font-weight: bold;" data-bs-toggle="modal" data-bs-target="#addModal">Thêm đơn hàng</button>
     <form method="GET" action="index.php" class="d-flex">
         <input type="hidden" name="page" value="oders">
-        <input name="search" class="form-control me-2" placeholder=" Khách hàng / sản phẩm"
+        <input name="search" class="form-control me-2" placeholder="Tìm khách hàng / sản phẩm"
                value="<?= htmlspecialchars($search) ?>" style="max-width: 400px;">
-        <button type="submit" class="btn btn-primary">Tìm Kiếm</button>
+        <button type="submit" class="btn btn-primary">🔍 Tìm Kiếm</button>
         <?php if ($search): ?>
             <a href="index.php?page=oders" class="btn btn-outline-secondary ms-2">✕ Clear</a>
         <?php endif; ?>
     </form>
 </div>
 
+<div style="overflow-x: auto;">
 <table class="table table-bordered text-center align-middle">
 <thead>
-<tr style="border-bottom: 2px solid #b91c1c;">
-    <th style="color: #e11818; font-weight: bold; border-bottom: 2px solid #b91c1c;">ID</th>
-    <th style="color: #e11818; font-weight: bold; border-bottom: 2px solid #b91c1c;">Khách hàng</th>
-    <th style="color: #e11818; font-weight: bold; border-bottom: 2px solid #b91c1c;">Sản phẩm</th>
-    <th style="color: #e11818; font-weight: bold; border-bottom: 2px solid #b91c1c;">Số lượng</th>
-    <th style="color: #e11818 ; font-weight: bold; border-bottom: 2px solid #b91c1c;">Tổng tiền</th>
-    <th style="color: #e11818; font-weight: bold; border-bottom: 2px solid #b91c1c;">Ngày đặt</th>
-    <th style="color: #e11818; font-weight: bold; border-bottom: 2px solid #b91c1c;">Hành động</th>
+<tr style="background: #b91c1c; color: white;">
+    <th style="border: 1px solid #b91c1c;">ID</th>
+    <th style="border: 1px solid #b91c1c;">Khách hàng</th>
+    <th style="border: 1px solid #b91c1c;">Sản phẩm</th>
+    <th style="border: 1px solid #b91c1c;">Số lượng</th>
+    <th style="border: 1px solid #b91c1c;">Tổng tiền</th>
+    <th style="border: 1px solid #b91c1c;">Ngày đặt</th>
+    <th style="border: 1px solid #b91c1c;">Thanh toán</th>
+    <th style="border: 1px solid #b91c1c;">Trạng thái</th>
+    <th style="border: 1px solid #b91c1c;">Hành động</th>
 </tr>
 </thead>
 <tbody>
-<?php if ($orders): foreach ($orders as $o): ?>
+<?php if ($orders): 
+    foreach ($orders as $o): 
+        $status = $o['status'] ?? 'pending';
+        $badge_class = ($status === 'approved') ? 'bg-success' : (($status === 'cancelled') ? 'bg-danger' : 'bg-warning text-dark');
+        $status_text = ($status === 'approved') ? '✓ Đã duyệt' : (($status === 'cancelled') ? '✗ Đã huỷ' : '⏳ Chờ duyệt');
+?>
 <tr>
-    <td><?= $o['orders_id'] ?></td>
+    <td><strong><?= $o['orders_id'] ?></strong></td>
     <td><?= htmlspecialchars($o['customer_name'] ?? 'Ẩn danh') ?></td>
     <td><?= htmlspecialchars($o['product_name'] ?? 'Đã xóa') ?></td>
-    <td><?= $o['quantity'] ?></td>
-    <td class="text-danger fw-bold">
-        <?= number_format($o['totalamount'], 0, ',', '.') ?>₫
-    </td>
+    <td><span class="badge bg-info"><?= $o['quantity'] ?></span></td>
+    <td class="text-danger fw-bold"><?= number_format($o['totalamount'], 0, ',', '.') ?>đ</td>
     <td><?= date('d/m/Y H:i', strtotime($o['order_date'])) ?></td>
-    <td>
-        <button class="btn btn-warning btn-sm editBtn"
-            data-id="<?= $o['orders_id'] ?>"
-            data-qty="<?= $o['quantity'] ?>"
-            data-total="<?= $o['totalamount'] ?>">✏️</button>
-
+    <td><?= htmlspecialchars($o['payment_method'] ?? 'N/A') ?></td>
+    <td><span class="badge <?= $badge_class ?>"><?= $status_text ?></span></td>
+    <td style="white-space: nowrap;">
+        <?php if ($status === 'pending'): ?>
+            <a href="index.php?page=oders&approve=<?= $o['orders_id'] ?>"
+               class="btn btn-success btn-sm"
+               onclick="return confirm('Duyệt đơn hàng này? Kho sẽ được trừ.')">✓ Duyệt</a>
+            <a href="index.php?page=oders&reject=<?= $o['orders_id'] ?>"
+               class="btn btn-warning btn-sm"
+               onclick="return confirm('Huỷ đơn hàng này?')">✕ Huỷ</a>
+        <?php endif; ?>
         <a href="index.php?page=oders&delete=<?= $o['orders_id'] ?>"
            class="btn btn-danger btn-sm"
-           onclick="return confirm('Xóa đơn hàng này?')">🗑️</a>
+           onclick="return confirm('Xóa đơn hàng này?')">🗑️ Xóa</a>
     </td>
 </tr>
-<?php endforeach; else: ?>
-<tr><td colspan="7" class="text-center text-muted">Không có đơn hàng</td></tr>
+<?php 
+    endforeach;
+else: 
+?>
+<tr>
+    <td colspan="9" class="text-center text-muted py-4">📭 Không có đơn hàng nào</td>
+</tr>
 <?php endif; ?>
 </tbody>
 </table>
-
-<!-- MODAL SỬA -->
-<div class="modal fade" id="editModal">
-<div class="modal-dialog">
-<form method="POST" class="modal-content">
-<div class="modal-header" style="background-color: #b91c1c; color: white;">
-    <h5>Sửa đơn hàng</h5>
-    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-</div>
-<div class="modal-body">
-    <input type="hidden" name="action" value="edit">
-    <input type="hidden" name="id" id="edit_id">
-
-    <label>Số lượng</label>
-    <input type="number" name="quantity" id="edit_qty" class="form-control mb-2" min="1" required>
-
-    <label>Tổng tiền</label>
-    <input type="number" name="totalamount" id="edit_total" class="form-control" min="0" step="0.01" required>
-</div>
-<div class="modal-footer">
-    <button type="submit" class="btn" style="background-color: #b91c1c; color: white;"> Cập nhật</button>
-</div>
-</form>
-</div>
 </div>
 
-<!-- MODAL THÊM -->
-<div class="modal fade" id="addModal">
-<div class="modal-dialog">
-<form method="POST" class="modal-content">
-<div class="modal-header" style="background-color: #e11818; color: white;">
-    <h5> Thêm đơn hàng </h5>
-    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
-</div>
-<div class="modal-body">
-    <input type="hidden" name="action" value="add">
-    
-    <label>Khách hàng</label>
-    <select name="user_id" id="add_user" class="form-control mb-2" required>
-        <option value="">-- Chọn khách hàng --</option>
-        <?php 
-        $users = $conn->query("SELECT ID_user, username FROM users ORDER BY username");
-        foreach ($users as $u): 
-        ?>
-            <option value="<?= $u['ID_user'] ?>"><?= htmlspecialchars($u['username']) ?></option>
-        <?php endforeach; ?>
-    </select>
+<style>
+.table-bordered th, .table-bordered td {
+    border-color: #ddd;
+}
+.table-bordered thead th {
+    background: #b91c1c !important;
+    color: white !important;
+    font-weight: bold;
+}
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+}
+</style>
 
-    <label>Sản phẩm</label>
-    <select name="product_id" id="add_product" class="form-control mb-2" required>
-        <option value="">-- Chọn sản phẩm --</option>
-        <?php 
-        $products = $conn->query("SELECT id_product, products_name, price FROM products ORDER BY products_name");
-        foreach ($products as $p): 
-        ?>
-            <option value="<?= $p['id_product'] ?>" data-price="<?= $p['price'] ?>">
-                <?= htmlspecialchars($p['products_name']) ?> - <?= number_format($p['price'], 0, ',', '.') ?>₫
-            </option>
-        <?php endforeach; ?>
-    </select>
-
-    <label>Số lượng</label>
-    <input type="number" name="quantity" id="add_qty" class="form-control mb-2" min="1" value="1" required>
-
-    <label>Tổng tiền</label>
-    <input type="number" name="totalamount" id="add_total" class="form-control" min="0" step="0.01" required>
-</div>
-<div class="modal-footer">
-    <button type="submit" class="btn" style="background-color: #b91c1c; color: white;">➕ Thêm</button>
-</div>
-</form>
-</div>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-
-document.querySelectorAll('.editBtn').forEach(btn => {
-    btn.addEventListener('click', function() {
-        document.getElementById('edit_id').value = this.dataset.id;
-        document.getElementById('edit_qty').value = this.dataset.qty;
-        document.getElementById('edit_total').value = this.dataset.total;
-        new bootstrap.Modal(document.getElementById('editModal')).show();
+// Tự động đóng alert sau 3 giây
+document.addEventListener('DOMContentLoaded', function() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(alert => {
+        setTimeout(() => {
+            alert.style.transition = 'opacity 0.5s ease-in-out';
+            alert.style.opacity = '0';
+            setTimeout(() => {
+                alert.remove();
+            }, 500);
+        }, 3000);
     });
-});
-
-// Tính tổng tiền khi chọn sản phẩm hoặc nhập số lượng
-document.getElementById('add_product')?.addEventListener('change', function() {
-    const price = parseFloat(this.options[this.selectedIndex].dataset.price) || 0;
-    const qty = parseInt(document.getElementById('add_qty').value) || 1;
-    document.getElementById('add_total').value = (price * qty).toFixed(0);
-});
-
-document.getElementById('add_qty')?.addEventListener('input', function() {
-    const price = parseFloat(document.getElementById('add_product').options[document.getElementById('add_product').selectedIndex].dataset.price) || 0;
-    const qty = parseInt(this.value) || 1;
-    document.getElementById('add_total').value = (price * qty).toFixed(0);
 });
 </script>

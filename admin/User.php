@@ -298,6 +298,10 @@ if ($action === 'edit' && $user_id) {
             background-color: #f1f1f1;
         }
 
+        .action-links {
+            text-align: center;
+        }
+
         .action-links a {
             display: inline-block;
             text-decoration: none;
@@ -447,7 +451,7 @@ if ($action === 'edit' && $user_id) {
             case 'add':
         ?>
                 <div class="form-container">
-                    <h1>Thêm Người Dùng Mới</h1>
+                    
 
                     <?php if ($error_msg): ?>
                         <p class="message error"><?php echo htmlspecialchars($error_msg); ?></p>
@@ -528,19 +532,6 @@ if ($action === 'edit' && $user_id) {
                                 value="<?php echo htmlspecialchars($_POST['phone'] ?? $user_to_edit['Phone']); ?>" required>
                         </div>
 
-                        <div class="form-group">
-                            <label for="roles">Quyền (Roles)</label>
-                            <select id="roles" name="roles">
-                                <option value="user" <?php if (($_POST['roles'] ?? $user_to_edit['roles']) == 'user') echo 'selected'; ?>>User</option>
-                                <option value="admin" <?php if (($_POST['roles'] ?? $user_to_edit['roles']) == 'admin') echo 'selected'; ?>>Admin</option>
-                            </select>
-                        </div>
-                        <div class="button-group">
-                            <a href="<?php echo $list_link; ?>">Hủy bỏ</a>
-                            <button type="submit">Cập Nhật</button>
-                        </div>
-                    </form>
-                </div>
             <?php
                 break;
 
@@ -550,7 +541,6 @@ if ($action === 'edit' && $user_id) {
             ?>
                 <h1>Quản Lý Người Dùng</h1>
 
-                <a href="<?php echo $add_link; ?>" class="add-button">Thêm Người Dùng Mới</a>
 
                 <form action="<?php echo $current_page; ?>" method="GET" class="search-form">
                     <?php foreach ($list_query_params as $key => $value): ?>
@@ -609,10 +599,6 @@ if ($action === 'edit' && $user_id) {
                                     <td class="action-links">
                                         <?php
                                         // Tạo link Sửa
-                                        $edit_query_params = $list_query_params;
-                                        $edit_query_params['action'] = 'edit';
-                                        $edit_query_params['id'] = $user['ID_user'];
-                                        $edit_link = $current_page . '?' . http_build_query($edit_query_params);
 
                                         // Tạo link Xóa
                                         $delete_query_params = $list_query_params;
@@ -620,7 +606,6 @@ if ($action === 'edit' && $user_id) {
                                         $delete_query_params['id'] = $user['ID_user'];
                                         $delete_link = $current_page . '?' . http_build_query($delete_query_params);
                                         ?>
-                                        <a href="<?php echo $edit_link; ?>" class="action-edit">Sửa</a>
                                         <a href="<?php echo $delete_link; ?>" class="action-delete"
                                             onclick="return confirm('Bạn có chắc chắn muốn xóa người dùng này?');">Xóa</a>
                                     </td>

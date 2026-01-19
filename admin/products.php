@@ -222,7 +222,7 @@ function getImageUrl($p)
         </div>
         <div class="modal-body">
           <input type="hidden" name="action" value="add">
-          <div class="row g-3">
+          < class="row g-3">
             <div class="col-md-6"><label>Tên sản phẩm</label><input name="products_name" class="form-control" required></div>
             <div class="col-md-3"><label>Giá</label><input type="number" name="price" class="form-control" required></div>
             <div class="col-md-3"><label>Số lượng</label><input type="number" name="totalquantity" class="form-control" required></div>
@@ -232,12 +232,6 @@ function getImageUrl($p)
             <div class="col-md-4"><label>Ảnh chính</label><input type="text" name="images" class="form-control"></div>
             <div class="col-md-4"><label>Ảnh phụ 1</label><input type="text" name="image1" class="form-control"></div>
             <div class="col-md-4"><label>Ảnh phụ 2</label><input type="text" name="image2" class="form-control"></div>
-            <div class="col-md-4"><label>Trạng thái</label>
-              <select name="status" class="form-control" required>
-                <option value="Còn hàng">Còn hàng</option>
-                <option value="Hết hàng">Hết hàng</option>
-              </select>
-            </div>
           </div>
         </div>
         <div class="modal-footer"><button class="btn btn-custom">💾 Lưu</button></div>
@@ -278,15 +272,6 @@ function getImageUrl($p)
               <label>Số lượng đã bán</label>
               <input type="number" name="quantitySold" id="edit_sold" class="form-control" required>
             </div>
-
-            <div class="col-md-4">
-              <label>Trạng thái</label>
-              <select name="status" id="edit_status" class="form-control" required>
-                <option value="Còn hàng">Còn hàng</option>
-                <option value="Hết hàng">Hết hàng</option>
-              </select>
-            </div>
-
 
             <div class="col-12">
               <label>Mô tả</label>
@@ -339,7 +324,6 @@ function getImageUrl($p)
         document.getElementById('edit_sold').value = btn.dataset.sold;
         document.getElementById('edit_desc').value = btn.dataset.desc;
         document.getElementById('edit_category').value = btn.dataset.category;
-        document.getElementById('edit_status').value = btn.dataset.status;
         document.getElementById('edit_img').value = btn.dataset.img;
         document.getElementById('edit_img1').value = btn.dataset.img1;
         document.getElementById('edit_img2').value = btn.dataset.img2;

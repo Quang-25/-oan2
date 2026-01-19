@@ -61,7 +61,7 @@ include __DIR__ . "/../Page.backend/Profile.backend.php";
                             <th>Mã đơn</th>
                             <th>Ngày đặt</th>
                             <th>Tổng tiền</th>
-                            <th>Trạng thái</th>
+                            <th>Phương thức thanh toán</th>
                         </tr>
                     </thead>
                     <tbody>
