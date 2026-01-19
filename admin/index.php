@@ -6,8 +6,8 @@ if (!isset($_SESSION['admin'])) {
 }
 $admin = $_SESSION['admin'];
 
-// Lấy trang cần load qua query string, mặc định là products.php
-$page = isset($_GET['page']) ? $_GET['page'] : 'products';
+// Lấy trang cần load qua query string, mặc định là Dashboard.php
+$page = isset($_GET['page']) ? $_GET['page'] : 'Dashboard';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -34,7 +34,9 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'products';
             <p>Xin chào, <b><?= htmlspecialchars($admin['Name']) ?></b></p>
         </div>
         <nav class="sidebar-nav">
+            <a href="?page=Dashboard" class="<?= $page == 'Dashboard' ? 'active' : '' ?>"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
             <a href="?page=products" class="<?= $page == 'products' ? 'active' : '' ?>"><i class="fa-solid fa-box"></i> Sản phẩm</a>
+            <a href="?page=statistics" class="<?= $page == 'statistics' ? 'active' : '' ?>"><i class="fa-solid fa-pie-chart"></i> Thống Kê</a>
             <a href="?page=User" class="<?= $page == 'User' ? 'active' : '' ?>"><i class="fa-solid fa-users"></i> Người dùng</a>
             <a href="?page=oders" class="<?= $page == 'oders' ? 'active' : '' ?>"><i class="fa-solid fa-cart-shopping"></i> Đơn hàng</a>
         </nav>

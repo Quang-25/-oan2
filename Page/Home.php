@@ -91,11 +91,11 @@ include __DIR__ . "/../config/db.php";
       <div class="banner2">
         <img src="https://demo037030.web30s.vn/datafiles/32835/upload/images/img-banner-1.jpg?t=1752894235" class="banner-2" alt="banner">
       </div>
-      <h2 class="nameproduct">Sản phẩm mới</h2>
+      <h2 class="nameproduct">Sản phẩm chính</h2>
       <div class="row">
         <?php
         // Lấy sản phẩm mới nhất
-        $sql = "SELECT * FROM products ORDER BY id_product DESC LIMIT 8";
+        $sql = "SELECT * FROM products ORDER BY id_product DESC LIMIT 10";
         $stmt =  $conn->query($sql);
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
