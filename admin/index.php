@@ -6,8 +6,8 @@ if (!isset($_SESSION['admin'])) {
 }
 $admin = $_SESSION['admin'];
 
-// Lấy trang cần load qua query string, mặc định là Dashboard.php
-$page = isset($_GET['page']) ? $_GET['page'] : 'Dashboard';
+// Lấy trang cần load qua query string, mặc định là products
+$page = isset($_GET['page']) ? $_GET['page'] : 'products';
 ?>
 <!DOCTYPE html>
 <html lang="vi">
@@ -53,7 +53,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Dashboard';
         if (file_exists($file)) {
             include $file;
         } else {
-            echo "<p>❌ Trang không tồn tại.</p>";
+            echo "<div class='alert alert-danger'><i class='fa-solid fa-circle-exclamation'></i> Trang <strong>" . htmlspecialchars($page) . "</strong> không tồn tại.</div>";
         }
         ?>
     </main>
