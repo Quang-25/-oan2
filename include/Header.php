@@ -105,7 +105,6 @@ if (session_status() === PHP_SESSION_NONE) {
           <a class="nav-link" href="../Page/Product.php">SẢN PHẨM</a>
         </div>
       </li>
-      <li class="nav-item"><a class="nav-link" href="#">KHUYẾN MÃI</a></li>
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown">DỊCH VỤ</a>
         <ul class="dropdown-menu">

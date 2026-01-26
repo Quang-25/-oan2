@@ -176,7 +176,7 @@ $topChartProducts = array_slice($products, 0, 10);
 <!-- CHARTS -->
 <div class="charts-grid">
   <div class="chart-container">
-    <h3><i class="bi bi-pie-chart"></i> Tồn kho vs Đã bán</h3>
+    <h3><i class="bi bi-pie-chart"></i> Còn lại vs Đã bán</h3>
     <div class="chart-wrapper">
       <canvas id="pieChart"></canvas>
     </div>

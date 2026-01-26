@@ -95,7 +95,7 @@ include __DIR__ . "/../config/db.php";
       <div class="row">
         <?php
         // Lấy sản phẩm mới nhất
-        $sql = "SELECT * FROM products ORDER BY id_product DESC LIMIT 10";
+        $sql = "SELECT * FROM products ORDER BY id_product DESC LIMIT 8";
         $stmt =  $conn->query($sql);
 
         while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {

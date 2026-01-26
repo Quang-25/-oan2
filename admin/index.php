@@ -34,11 +34,12 @@ $page = isset($_GET['page']) ? $_GET['page'] : 'Dashboard';
             <p>Xin chào, <b><?= htmlspecialchars($admin['Name']) ?></b></p>
         </div>
         <nav class="sidebar-nav">
-            <a href="?page=Dashboard" class="<?= $page == 'Dashboard' ? 'active' : '' ?>"><i class="fa-solid fa-chart-line"></i> Dashboard</a>
             <a href="?page=products" class="<?= $page == 'products' ? 'active' : '' ?>"><i class="fa-solid fa-box"></i> Sản phẩm</a>
             <a href="?page=statistics" class="<?= $page == 'statistics' ? 'active' : '' ?>"><i class="fa-solid fa-pie-chart"></i> Thống Kê</a>
+            <a href="?page=revenue" class="<?= $page == 'revenue' ? 'active' : '' ?>"><i class="fa-solid fa-chart-bar"></i> Doanh Thu</a>
             <a href="?page=User" class="<?= $page == 'User' ? 'active' : '' ?>"><i class="fa-solid fa-users"></i> Người dùng</a>
             <a href="?page=oders" class="<?= $page == 'oders' ? 'active' : '' ?>"><i class="fa-solid fa-cart-shopping"></i> Đơn hàng</a>
+            <a href="?page=shipping" class="<?= $page == 'shipping' ? 'active' : '' ?>"><i class="fa-solid fa-truck"></i> Giao Vận</a>
         </nav>
         <div class="sidebar-footer mt-auto">
             <a href="logout.php" class="btn btn-light w-100"><i class="fa-solid fa-right-from-bracket"></i> Đăng xuất</a>

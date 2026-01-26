@@ -25,7 +25,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'add') {
   $quantitySold = intval($_POST['quantitySold'] ?? 0);
   $desc = trim($_POST['desc']);
   $category = trim($_POST['category'] ?? '');
-  $status = $_POST['status'] ?? 'Còn hàng';
+  // Tự động cập nhật status: nếu quantitySold >= totalquantity thì hết hàng, ngược lại là còn hàng
+  $status = ($quantitySold >= $totalquantity) ? 'Hết hàng' : 'Còn hàng';
   $images = $_POST['images'] ?? '';
   $image1 = $_POST['image1'] ?? '';
   $image2 = $_POST['image2'] ?? '';
@@ -49,7 +50,8 @@ if (isset($_POST['action']) && $_POST['action'] === 'edit') {
   $quantitySold = intval($_POST['quantitySold']);
   $desc = trim($_POST['desc']);
   $category = $_POST['category'] ?? 'Túi quà';
-  $status = $_POST['status'] ?? 'Còn hàng';
+  // Tự động cập nhật status: nếu quantitySold >= totalquantity thì hết hàng, ngược lại là còn hàng
+  $status = ($quantitySold >= $quantity) ? 'Hết hàng' : 'Còn hàng';
   $images = $_POST['images'] ?? '';
   $image1 = $_POST['image1'] ?? '';
   $image2 = $_POST['image2'] ?? '';
@@ -222,13 +224,20 @@ function getImageUrl($p)
         </div>
         <div class="modal-body">
           <input type="hidden" name="action" value="add">
-          < class="row g-3">
+          <div class="row g-3">
             <div class="col-md-6"><label>Tên sản phẩm</label><input name="products_name" class="form-control" required></div>
             <div class="col-md-3"><label>Giá</label><input type="number" name="price" class="form-control" required></div>
             <div class="col-md-3"><label>Số lượng</label><input type="number" name="totalquantity" class="form-control" required></div>
             <div class="col-md-3"><label>Số lượng đã bán</label><input type="number" name="quantitySold" class="form-control" value="0" require></div>
             <div class="col-12"><label>Mô tả</label><textarea name="desc" class="form-control"></textarea></div>
-            <div class="col-12"><label>Loại</label><input type="text" name="category" class="form-control"></div>
+            <div class="col-12"><label>Loại</label>
+              <select name="category" class="form-control" required>
+                <option value="">-- Chọn loại --</option>
+                <option value="Hộp quà">Hộp quà</option>
+                <option value="Giỏ quà">Giỏ quà</option>
+                <option value="Túi quà">Túi quà</option>
+              </select>
+            </div>
             <div class="col-md-4"><label>Ảnh chính</label><input type="text" name="images" class="form-control"></div>
             <div class="col-md-4"><label>Ảnh phụ 1</label><input type="text" name="image1" class="form-control"></div>
             <div class="col-md-4"><label>Ảnh phụ 2</label><input type="text" name="image2" class="form-control"></div>
@@ -280,7 +289,12 @@ function getImageUrl($p)
 
             <div class="col-12">
               <label>Loại</label>
-              <input type="text" name="category" id="edit_category" class="form-control">
+              <select name="category" id="edit_category" class="form-control" required>
+                <option value="">-- Chọn loại --</option>
+                <option value="Hộp quà">Hộp quà</option>
+                <option value="Giỏ quà">Giỏ quà</option>
+                <option value="Túi quà">Túi quà</option>
+              </select>
             </div>
             <div class="col-12">
               <label>Ảnh hiện tại</label><br>
