@@ -86,9 +86,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                 $quantity = intval($item['quantity']);
                 $totalamount = intval($item['price']) * $quantity;
 
-                //  Lưu đơn hàng vào bảng orders
-                $sql = "INSERT INTO orders (quantity, totalamount, User_ID, Product_ID, order_date, payment_method)
-                        VALUES (:quantity, :totalamount, :user_id, :product_id, :order_date, :payment_method)";
+                //  Lưu đơn hàng vào bảng orders với status = 'pending'
+                $sql = "INSERT INTO orders (quantity, totalamount, User_ID, Product_ID, order_date, payment_method, status)
+                        VALUES (:quantity, :totalamount, :user_id, :product_id, :order_date, :payment_method, 'pending')";
                 $stmt = $conn->prepare($sql);
                 $stmt->execute([
                     ':quantity' => $quantity,
@@ -97,17 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['checkout'])) {
                     ':product_id' => $product_id,
                     ':order_date' => $order_date,
                     ':payment_method' => $payment_method
-                ]);
-
-                // Cập nhật tồn kho sản phẩm
-                $updateSql = "UPDATE products 
-                              SET totalquantity = totalquantity - :qty, 
-                                  quantitySold = quantitySold + :qty 
-                              WHERE id_product = :pid";
-                $updateStmt = $conn->prepare($updateSql);
-                $updateStmt->execute([
-                    ':qty' => $quantity,
-                    ':pid' => $product_id
                 ]);
             }
 

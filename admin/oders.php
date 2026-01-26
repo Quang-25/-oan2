@@ -28,76 +28,81 @@ if (isset($_GET['approve'])) {
         $order = $stmt->fetch(PDO::FETCH_ASSOC);
         
         if ($order) {
-            // Kiểm tra tồn kho
-            $current_inventory = (int)$order['totalquantity'];
-            $needed = (int)$order['quantity'];
-            
-            if ($current_inventory < $needed) {
-                $_SESSION['error'] = "✗ Tồn kho không đủ! Chỉ còn " . $current_inventory;
+            // Kiểm tra nếu đơn hàng đang pending mới được duyệt
+            if ($order['status'] !== 'pending') {
+                $_SESSION['error'] = "✗ Đơn hàng này đã được xử lý rồi!";
             } else {
-                // Trừ kho
-                $stmt = $conn->prepare("
-                    UPDATE products 
-                    SET totalquantity = totalquantity - ?,
-                        quantitySold = quantitySold + ?
-                    WHERE id_product = ?
-                ");
-                $stmt->execute([$needed, $needed, $order['Product_ID']]);
+                // Kiểm tra tồn kho
+                $current_inventory = (int)$order['totalquantity'];
+                $needed = (int)$order['quantity'];
                 
-                // Cập nhật status
-                $stmt = $conn->prepare("
-                    UPDATE orders 
-                    SET status = 'approved'
-                    WHERE orders_id = ?
-                ");
-                $stmt->execute([$order_id]);
-                
-                // Gửi email
-                if ($order['email']) {
-                    require_once __DIR__ . "/../vendor/autoload.php";
-                    $mail = new PHPMailer(true);
-                    try {
-                        $mail->isSMTP();
-                        $mail->Host       = 'smtp.gmail.com';
-                        $mail->SMTPAuth   = true;
-                        $mail->Username   = 'Cohoi2512@gmail.com';
-                        $mail->Password   = 'higt jgrf aavo qnhg';
-                        $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
-                        $mail->Port       = 465;
-                        $mail->CharSet    = 'UTF-8';
+                if ($current_inventory < $needed) {
+                    $_SESSION['error'] = "✗ Tồn kho không đủ! Chỉ còn " . $current_inventory;
+                } else {
+                    // Trừ kho (chỉ khi duyệt đơn)
+                    $stmt = $conn->prepare("
+                        UPDATE products 
+                        SET totalquantity = totalquantity - ?,
+                            quantitySold = quantitySold + ?
+                        WHERE id_product = ?
+                    ");
+                    $stmt->execute([$needed, $needed, $order['Product_ID']]);
+                    
+                    // Cập nhật status từ pending → approved
+                    $stmt = $conn->prepare("
+                        UPDATE orders 
+                        SET status = 'approved'
+                        WHERE orders_id = ?
+                    ");
+                    $stmt->execute([$order_id]);
+                    
+                    // Gửi email
+                    if ($order['email']) {
+                        require_once __DIR__ . "/../vendor/autoload.php";
+                        $mail = new PHPMailer(true);
+                        try {
+                            $mail->isSMTP();
+                            $mail->Host       = 'smtp.gmail.com';
+                            $mail->SMTPAuth   = true;
+                            $mail->Username   = 'Cohoi2512@gmail.com';
+                            $mail->Password   = 'higt jgrf aavo qnhg';
+                            $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+                            $mail->Port       = 465;
+                            $mail->CharSet    = 'UTF-8';
 
-                        $mail->setFrom('Cohoi2512@gmail.com', 'Giỏ Hàng Tết Việt');
-                        $mail->addAddress($order['email'], $order['username']);
-                        $mail->isHTML(true);
-                        $mail->Subject = "Xác nhận thanh toán & duyệt đơn hàng #$order_id - Giỏ Hàng Tết Việt";
-                        $mail->Body = "
-                            <h3>Xin chào {$order['username']}</h3>
+                            $mail->setFrom('Cohoi2512@gmail.com', 'Giỏ Hàng Tết Việt');
+                            $mail->addAddress($order['email'], $order['username']);
+                            $mail->isHTML(true);
+                            $mail->Subject = "Xác nhận thanh toán & duyệt đơn hàng #$order_id - Giỏ Hàng Tết Việt";
+                            $mail->Body = "
+                                <h3>Xin chào {$order['username']}</h3>
 
-                            <p>Chúng tôi đã <strong>xác nhận thanh toán</strong> cho đơn hàng 
-                             của bạn tại <strong>Giỏ Hàng Tết Việt</strong>.</p>
-                            <p>Đơn hàng của bạn đã được duyệt và hiện đang trong quá trình chuẩn bị giao hàng.</p>
-                            <p><strong>Thông tin đơn hàng:</strong></p>
-                            <ul style='list-style: none; padding: 0;'>
-                                <li>📦 <strong>Sản phẩm:</strong> {$order['products_name']}</li>
-                                <li>📊 <strong>Số lượng:</strong> $needed</li>
-                                <li>💰 <strong>Tổng tiền đã thanh toán:</strong> " . number_format($order['totalamount']) . " đ</li>
-                                <li>📅 <strong>Ngày đặt:</strong> " . date('d/m/Y H:i', strtotime($order['order_date'])) . "</li>
-                                <li>💳 <strong>Phương thức thanh toán:</strong> {$order['payment_method']}</li>
-                            </ul>
+                                <p>Chúng tôi đã <strong>xác nhận thanh toán</strong> cho đơn hàng 
+                                 của bạn tại <strong>Giỏ Hàng Tết Việt</strong>.</p>
+                                <p>Đơn hàng của bạn đã được duyệt và hiện đang trong quá trình chuẩn bị giao hàng.</p>
+                                <p><strong>Thông tin đơn hàng:</strong></p>
+                                <ul style='list-style: none; padding: 0;'>
+                                    <li><strong>Sản phẩm:</strong> {$order['products_name']}</li>
+                                    <li><strong>Số lượng:</strong> $needed</li>
+                                    <li><strong>Tổng tiền đã thanh toán:</strong> " . number_format($order['totalamount']) . " đ</li>
+                                    <li><strong>Ngày đặt:</strong> " . date('d/m/Y H:i', strtotime($order['order_date'])) . "</li>
+                                    <li><strong>Phương thức thanh toán:</strong> {$order['payment_method']}</li>
+                                </ul>
 
-                            <p>Chúng tôi sẽ sớm liên hệ với bạn khi đơn hàng được bàn giao cho đơn vị vận chuyển.</p>
+                                <p>Chúng tôi sẽ sớm liên hệ với bạn khi đơn hàng được bàn giao cho đơn vị vận chuyển.</p>
 
-                            <br>
-                            <p>Trân trọng,<br>
-                            <strong>Đội ngũ Giỏ Hàng Tết Việt</strong></p>
-                        ";
-                        $mail->send();
-                    } catch (Exception $e) {
-                        error_log("Lỗi gửi email duyệt: " . $mail->ErrorInfo);
+                                <br>
+                                <p>Trân trọng,<br>
+                                <strong>Đội ngũ Giỏ Hàng Tết Việt</strong></p>
+                            ";
+                            $mail->send();
+                        } catch (Exception $e) {
+                            error_log("Lỗi gửi email duyệt: " . $mail->ErrorInfo);
+                        }
                     }
+                    
+                    $_SESSION['success'] = "✓ Duyệt đơn hàng thành công! Kho đã được trừ.";
                 }
-                
-                $_SESSION['success'] = "✓ Duyệt đơn hàng thành công! Kho đã được trừ.";
             }
         } else {
             $_SESSION['error'] = "✗ Không tìm thấy đơn hàng!";
@@ -152,8 +157,8 @@ if (isset($_GET['reject'])) {
                 $mail->Subject = ' Đơn hàng #' . $order_id . ' bị huỷ';
                 $mail->Body = "
                     <h3>Xin chào {$order['username']}</h3>
-                    <p>Đơn hàng <strong>#$order_id</strong> của bạn đã bị huỷ.</p>
-                    <p>Lý do huỷ có thể do:</p>
+                    <p>Đơn hàng <strong>#$order[products_name]</strong> của bạn đã bị huỷ.</p>
+                    <p>Lý do huỷ  do:</p>
                     <ul>
                         <li>Sản phẩm hết hàng</li>
                         <li>Không đủ điều kiện thanh toán</li>
